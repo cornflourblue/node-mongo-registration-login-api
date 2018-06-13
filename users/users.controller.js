@@ -16,7 +16,7 @@ module.exports = router;
 
 function authenticate(req, res, next) {
     userService.authenticate(req.body)
-        .then(user => user ? res.json(user) : res.status(401).json({ error: 'Username or password is incorrect' }))
+        .then(user => user ? res.json(user) : res.status(400).json({ error: 'Username or password is incorrect' }))
         .catch(err => next(err));
 }
 
