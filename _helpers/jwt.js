@@ -4,7 +4,7 @@ const userService = require('../users/user.service');
 
 module.exports = jwt;
 
-function jwt(req, res, next) {
+function jwt() {
     const secret = config.secret;
     return expressJwt({ secret, isRevoked }).unless({
         path: [
