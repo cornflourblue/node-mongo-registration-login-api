@@ -17,7 +17,7 @@ async function authenticate({ username, password }) {
     const user = await User.findOne({ username });
     if (user && bcrypt.compareSync(password, user.hash)) {
         const { hash, ...userWithoutHash } = user.toObject();
-        const token = jwt.sign({ sub: user._id }, config.secret);
+        const token = jwt.sign({ sub: user.id }, config.secret);
         return {
             ...userWithoutHash,
             token
@@ -29,8 +29,8 @@ async function getAll() {
     return await User.find().select('-hash');
 }
 
-async function getById(_id) {
-    return await User.findById(_id).select('-hash');
+async function getById(id) {
+    return await User.findById(id).select('-hash');
 }
 
 async function create(userParam) {
@@ -50,8 +50,8 @@ async function create(userParam) {
     await user.save();
 }
 
-async function update(_id, userParam) {
-    const user = await User.findById(_id);
+async function update(id, userParam) {
+    const user = await User.findById(id);
 
     // validate
     if (!user) throw 'User not found';
@@ -70,6 +70,6 @@ async function update(_id, userParam) {
     await user.save();
 }
 
-async function _delete(_id) {
-    await User.findByIdAndRemove(_id);
+async function _delete(id) {
+    await User.findByIdAndRemove(id);
 }
