@@ -1,4 +1,4 @@
-﻿import { secret } from '../config.json';
+﻿import config from '../config/passport';
 import { sign } from 'jsonwebtoken';
 import { compareSync, hashSync } from 'bcryptjs';
 import { User as _User } from '_helpers/db';
@@ -17,7 +17,7 @@ async function authenticate({ username, password }) {
     const user = await User.findOne({ username });
     if (user && compareSync(password, user.hash)) {
         const { hash, ...userWithoutHash } = user.toObject();
-        const token = sign({ sub: user.id }, secret);
+        const token = sign({ sub: user.id }, config.JWT_SECRET);
         return {
             ...userWithoutHash,
             token
