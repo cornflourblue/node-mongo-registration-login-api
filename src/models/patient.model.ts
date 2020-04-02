@@ -1,5 +1,5 @@
 import { Schema, Model, model } from 'mongoose';
-import IPatient from '../patients/patient.interface';
+import IPatient from '../interfaces/patient.interface';
 
 // Schema
 const patientSchema = new Schema({

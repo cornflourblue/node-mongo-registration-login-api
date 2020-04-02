@@ -1,6 +1,6 @@
 ﻿import { Router } from 'express';
 const router = Router();
-import { authenticate as _authenticate, create, getAll as _getAll, getById as _getById, update as _update, _delete } from './user.service';
+import { authenticate as _authenticate, create, getAll as _getAll, getById as _getById, update as _update, _delete } from '../services/user.service';
 
 // routes
 router.post('/authenticate', authenticate);

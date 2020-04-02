@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import Patient from '../patients/patient.model';
-import IPatient from '../patients/patient.interface';
+import Patient from '../models/patient.model';
+import IPatient from '../interfaces/patient.interface';
 
 class PatientController {
 
