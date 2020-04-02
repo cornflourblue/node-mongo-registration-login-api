@@ -1,15 +1,15 @@
 {
-    "name": "node-mongo-registration-login-api",
+    "name": "prescription-validator-api",
     "version": "1.0.0",
-    "description": "NodeJS + MongoDB API for User Management, Authentication and Registration",
+    "description": "NodeJS + MongoDB API for Prescription Management",
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/cornflourblue/node-mongo-registration-login-api.git"
+        "url": "https://github.com/eugesma/prescription-validator-api.git"
     },
     "scripts": {
         "start": "node ./server.js",
-        "start-dev": "nodemon ./server.js"
+        "dev": "nodemon ./server.js"
     },
     "dependencies": {
         "bcryptjs": "^2.4.3",
