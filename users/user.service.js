@@ -1,10 +1,10 @@
-﻿const config = require('config.json');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const db = require('_helpers/db');
-const User = db.User;
+﻿import { secret } from 'config.json';
+import { sign } from 'jsonwebtoken';
+import { compareSync, hashSync } from 'bcryptjs';
+import { User as _User } from '_helpers/db';
+const User = _User;
 
-module.exports = {
+export default {
     authenticate,
     getAll,
     getById,
@@ -15,9 +15,9 @@ module.exports = {
 
 async function authenticate({ username, password }) {
     const user = await User.findOne({ username });
-    if (user && bcrypt.compareSync(password, user.hash)) {
+    if (user && compareSync(password, user.hash)) {
         const { hash, ...userWithoutHash } = user.toObject();
-        const token = jwt.sign({ sub: user.id }, config.secret);
+        const token = sign({ sub: user.id }, secret);
         return {
             ...userWithoutHash,
             token
@@ -43,7 +43,7 @@ async function create(userParam) {
 
     // hash password
     if (userParam.password) {
-        user.hash = bcrypt.hashSync(userParam.password, 10);
+        user.hash = hashSync(userParam.password, 10);
     }
 
     // save user
@@ -61,7 +61,7 @@ async function update(id, userParam) {
 
     // hash password if it was entered
     if (userParam.password) {
-        userParam.hash = bcrypt.hashSync(userParam.password, 10);
+        userParam.hash = hashSync(userParam.password, 10);
     }
 
     // copy userParam properties to user
