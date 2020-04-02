@@ -3,12 +3,16 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
 import compression from 'compression';
-import * as db from './database';
+import { errorHandler } from "./middlewares/error.middleware";
+import { notFoundHandler } from "./middlewares/notFound.middleware";
+import * as db from './database/dbconfig';
+// config
+import config from './config/env.config';
 
-import authRoutes from './routes/auth';
+import routes from './routes/routes';
 
 class Server {
-    
+
     protected app: express.Application;
 
     constructor() {
@@ -19,19 +23,24 @@ class Server {
     config() {
         db.initializeMongo();
         this.app.set('port', process.env.PORT || 4000);
+        // logger
+        this.app.use(morgan('dev'));
+        // security
+        this.app.use(helmet());
+        // request compression
+        this.app.use(compression());
+        this.app.use(cors());
         // middleware
         this.app.use(express.json());
         this.app.use(express.urlencoded({extended: false}));
-        this.app.use(morgan('dev'));
-        this.app.use(helmet());
-        this.app.use(compression());
-        this.app.use(cors());
         // routes
         this.routes();
+        this.app.use(errorHandler);
+        this.app.use(notFoundHandler);
     }
 
     routes() {
-        this.app.use('/api/auth', authRoutes);
+        this.app.use(`${(process.env.API_URI_PRFIX || config.API_URI_PREFIX)}`, routes);
     }
 
     start() {

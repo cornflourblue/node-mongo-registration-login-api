@@ -17,18 +17,19 @@
     "dependencies": {
         "bcryptjs": "^2.4.3",
         "body-parser": "^1.19.0",
-        "cors": "^2.8.5",
         "compression": "^1.7.4",
+        "cors": "^2.8.5",
         "express": "^4.17.1",
         "helmet": "^3.21.2",
         "jsonwebtoken": "^8.5.1",
         "mongodb": "^3.2.7",
         "mongoose": "^5.6.9",
         "morgan": "^1.9.1",
-        "rootpath": "^0.1.2",
         "passport": "^0.4.1",
         "passport-jwt": "^4.0.0",
-        "passport-local": "^1.0.0"
+        "passport-local": "^1.0.0",
+        "rootpath": "^0.1.2",
+        "uuid": "^7.0.3"
     },
     "devDependencies": {
         "@types/bcryptjs": "^2.4.2",
@@ -43,6 +44,7 @@
         "@types/passport": "^1.0.2",
         "@types/passport-jwt": "^3.0.3",
         "@types/passport-local": "^1.0.33",
+        "@types/uuid": "^7.0.2",
         "nodemon": "^2.0.2",
         "ts-node": "^8.6.2",
         "typescript": "^3.7.5"
