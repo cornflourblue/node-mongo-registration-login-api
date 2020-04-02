@@ -1,4 +1,4 @@
-﻿import { secret } from 'config.json';
+﻿import { secret } from '../config.json';
 import { sign } from 'jsonwebtoken';
 import { compareSync, hashSync } from 'bcryptjs';
 import { User as _User } from '_helpers/db';
@@ -10,7 +10,7 @@ export default {
     getById,
     create,
     update,
-    delete: _delete
+    delete: _delete 
 };
 
 async function authenticate({ username, password }) {
