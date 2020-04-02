@@ -3,9 +3,9 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
 import compression from 'compression';
-import * as db from './src/database';
+import * as db from './database';
 
-import authRoutes from './src/routes/auth';
+import authRoutes from './routes/auth';
 
 class Server {
     
