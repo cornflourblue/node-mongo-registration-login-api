@@ -3,20 +3,17 @@ import IPatient from '../patients/patient.interface';
 
 // Schema
 const patientSchema = new Schema({
-  name: {
+  dni: {
     type: String
   },
-  barcode: {
+  last_name: {
     type: String
   },
-  costPrice: {
+  first_name: {
     type: Number
   },
-  salePrice: {
+  sex: {
     type: Number
-  },
-  description: {
-    type: String
   },
   image: {
     type: String
