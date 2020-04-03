@@ -4,22 +4,27 @@ import IPharmacist from '../interfaces/pharmacist.interface';
 // Schema
 const pharmacistSchema = new Schema({
   enrollment: {
-    type: String
+    type: String,
+    required: '{PATH} is required',
+    unique: true
   },
   last_name: {
-    type: String
+    type: String,
+    required: '{PATH} is required'
   },
   first_name: {
-    type: Number
+    type: String,
+    required: '{PATH} is required'
   },
   sex: {
-    type: Number
+    type: String,
+    required: '{PATH} is required'
   },
   image: {
     type: String
   },
   createdAt: { 
-    type: Date, 
+    type: Date,
     default: Date.now 
   },
   updatedAt: Date,
