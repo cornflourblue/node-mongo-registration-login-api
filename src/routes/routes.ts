@@ -6,6 +6,7 @@ import { BaseController } from '../interfaces/classes/base-controllers.interface
 // controllers
 import authController from '../controllers/auth.controller';
 import patientController from '../controllers/patient.controller';
+import pharmacistController from '../controllers/pharmacist.controller';
 import professionalController from '../controllers/professional.controller';
 
 class Routes {
@@ -22,6 +23,7 @@ class Routes {
 		this.router.post('/auth/login', passportMiddlewareLocal, authController.login);
     this.router.post('/auth/refresh', authController.refresh);
     this.resources('patients', patientController);
+    this.resources('pharmacists', pharmacistController);
     this.resources('professionals', professionalController);
   }
 
