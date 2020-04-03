@@ -76,7 +76,7 @@ const authenticationMiddleware = (req: Request, res: Response, next: NextFunctio
     passport.authenticate(authenticationType, {session: false}, (err, user, info) => {
         if (err) { return next(err) }
         if (!user) {
-            return res.status(400).json(info);
+            return res.status(401).json(info);
         }
         req.user = user;
         next();
