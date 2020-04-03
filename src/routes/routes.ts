@@ -4,7 +4,9 @@ import { passportMiddlewareLocal, passportMiddlewareJwt } from '../middlewares/p
 // interfaces
 import { BaseController } from '../interfaces/classes/base-controllers.interface';
 // controllers
-import authController from '../controllers//auth.controller';
+import authController from '../controllers/auth.controller';
+import patientController from '../controllers/patient.controller';
+import professionalController from '../controllers/professional.controller';
 
 class Routes {
 	router: Router;
@@ -19,7 +21,8 @@ class Routes {
 		this.router.post('/auth/register', authController.register);
 		this.router.post('/auth/login', passportMiddlewareLocal, authController.login);
     this.router.post('/auth/refresh', authController.refresh);
-
+    this.resources('patients', patientController);
+    this.resources('professionals', professionalController);
   }
 
   // resources function make easy generates CRUD routes

@@ -1,18 +1,18 @@
 import { Request, Response } from 'express';
-import Patient from '../models/patient.model';
-import IPatient from '../interfaces/patient.interface';
+import Professional from '../models/professional.model';
+import IProfessional from '../interfaces/professional.interface';
 import { BaseController } from '../interfaces/classes/base-controllers.interface';
 
-class PatientController implements BaseController{
+class ProfessionalController implements BaseController{
 
   public index = async (req: Request, res: Response): Promise<Response> => {
-    const patients: IPatient[] = await Patient.find();
-    return res.status(200).json({patients});
+    const professionals: IProfessional[] = await Professional.find();
+    return res.status(200).json({professionals});
   }
 
   public create = async (req: Request, res: Response): Promise<Response> => {
     const { dni, last_name, first_name, sex, image } = req.body;
-    const newPatient: IPatient = new Patient({
+    const newProfessional: IProfessional = new Professional({
       dni,
       last_name,
       first_name, 
@@ -20,8 +20,8 @@ class PatientController implements BaseController{
       image
     });
     try{
-      await newPatient.save();
-      return res.status(200).json({ newPatient });
+      await newProfessional.save();
+      return res.status(200).json({ newProfessional });
     }catch(err){
       console.log(err);
       return res.status(500).json('Server Error');
@@ -31,8 +31,8 @@ class PatientController implements BaseController{
   public show = async (req: Request, res: Response): Promise<Response> => {
     try{
       const id: string = req.params.id;
-      const patient: IPatient | null = await Patient.findOne({_id: id});
-      return res.status(200).json(patient);
+      const professional: IProfessional | null = await Professional.findOne({_id: id});
+      return res.status(200).json(professional);
     }catch(err){
       console.log(err);
       return res.status(500).json('Server Error');
@@ -41,9 +41,20 @@ class PatientController implements BaseController{
 
   public getByDni = async (req: Request, res: Response): Promise<Response> => {
     try{
-      const id: string = req.params.id;
-      const patient: IPatient | null = await Patient.findOne({_id: id});
-      return res.status(200).json(patient);
+      const dni: string = req.params.dni;
+      const professional: IProfessional | null = await Professional.findOne({dni: dni});
+      return res.status(200).json(professional);
+    }catch(err){
+      console.log(err);
+      return res.status(500).json('Server Error');
+    }
+  }
+
+  public getByEnrollment = async (req: Request, res: Response): Promise<Response> => {
+    try{
+      const enrollment: string = req.params.enrollment;
+      const professional: IProfessional | null = await Professional.findOne({enrollment: enrollment});
+      return res.status(200).json(professional);
     }catch(err){
       console.log(err);
       return res.status(500).json('Server Error');
@@ -54,15 +65,15 @@ class PatientController implements BaseController{
     try{
       const id: string = req.params.id;
       const { dni, last_name, first_name, sex, image } = req.body;
-      await Patient.findByIdAndUpdate(id, {
+      await Professional.findByIdAndUpdate(id, {
         dni,
         last_name,
         first_name,
         sex,
         image
       });
-      const patient = await Patient.findOne({_id: id});
-      return res.status(200).json(patient);
+      const professional = await Professional.findOne({_id: id});
+      return res.status(200).json(professional);
     } catch(err){
       console.log(err);
       return res.status(500).json('Server Error');
@@ -73,7 +84,7 @@ class PatientController implements BaseController{
     try{
 
       const { id } = req.params;
-      await Patient.findByIdAndDelete(id);
+      await Professional.findByIdAndDelete(id);
       return res.status(200).json('deleted');
     }catch(err){
       console.log(err);
@@ -82,4 +93,4 @@ class PatientController implements BaseController{
   }
 }
 
-export default new PatientController();
+export default new ProfessionalController();
