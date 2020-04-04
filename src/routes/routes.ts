@@ -6,7 +6,9 @@ import { BaseController } from '../interfaces/classes/base-controllers.interface
 // controllers
 import authController from '../controllers/auth.controller';
 import patientController from '../controllers/patient.controller';
+import pharmacistController from '../controllers/pharmacist.controller';
 import professionalController from '../controllers/professional.controller';
+import pharmacyController from '../controllers/pharmacy.controller';
 
 class Routes {
 	router: Router;
@@ -24,7 +26,15 @@ class Routes {
     this.router.post('/auth/login', passportMiddlewareLocal, authController.login);
     this.router.post('/auth/logout', authController.logout);
     this.router.post('/auth/refresh', authController.refresh);
+
+
     this.router.use('', passportMiddlewareJwt, this.resources('patients', patientController));
+
+    this.router.use('', passportMiddlewareJwt, this.resources('pharmacists', pharmacistController));
+    this.router.use('', passportMiddlewareJwt, this.router.get('pharmacists/getByEnrollment/:enrollment', pharmacistController.getByEnrollment));
+    this.router.use('', passportMiddlewareJwt,this.resources('pharmacies', pharmacyController));
+
+    this.router.use('', passportMiddlewareJwt, this.resources('professionals', professionalController));
     this.router.use('', passportMiddlewareJwt, this.resources('professionals', professionalController));
   }
 
