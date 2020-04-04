@@ -18,7 +18,7 @@ const pharmacistSchema = new Schema({
   },
   sex: {
     type: String,
-    enum: ['Masculino', 'Femenino', 'Otro'],
+    enum: ['Femenino', 'Masculino', 'Otro'],
     required: '{PATH} is required'
   },
   image: {

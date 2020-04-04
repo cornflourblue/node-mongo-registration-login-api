@@ -18,7 +18,7 @@ const professionalSchema = new Schema({
     required: '{PATH} is required'
   },
   sex: {
-    type: Number
+    enum: ['Femenino', 'Masculino', 'Otro'],
   },
   image: {
     type: String
