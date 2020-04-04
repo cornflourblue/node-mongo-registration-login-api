@@ -18,14 +18,15 @@ const pharmacistSchema = new Schema({
   },
   sex: {
     type: String,
+    enum: ['Masculino', 'Femenino', 'Otro'],
     required: '{PATH} is required'
   },
   image: {
     type: String
   },
-  createdAt: { 
+  createdAt: {
     type: Date,
-    default: Date.now 
+    default: Date.now
   },
   updatedAt: Date,
 });

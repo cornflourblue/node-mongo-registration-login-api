@@ -8,6 +8,7 @@ import authController from '../controllers/auth.controller';
 import patientController from '../controllers/patient.controller';
 import pharmacistController from '../controllers/pharmacist.controller';
 import professionalController from '../controllers/professional.controller';
+import pharmacyController from '../controllers/pharmacy.controller';
 
 class Routes {
 	router: Router;
@@ -24,7 +25,9 @@ class Routes {
     this.router.post('/auth/refresh', authController.refresh);
     this.resources('patients', patientController);
     this.resources('pharmacists', pharmacistController);
+    this.router.get('pharmacists/getByEnrollment/:enrollment', pharmacistController.getByEnrollment)
     this.resources('professionals', professionalController);
+    this.resources('pharmacies', pharmacyController);
   }
 
   // resources function make easy generates CRUD routes

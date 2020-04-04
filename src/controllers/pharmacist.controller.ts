@@ -41,8 +41,8 @@ class PharmacistController implements BaseController{
 
   public getByEnrollment = async (req: Request, res: Response): Promise<Response> => {
     try{
-      const id: string = req.params.id;
-      const pharmacist: IPharmacist | null = await Pharmacist.findOne({_id: id});
+      const enrollment: string = req.params.enrollment;
+      const pharmacist: IPharmacist | null = await Pharmacist.findOne({enrollment: enrollment});
       return res.status(200).json(pharmacist);
     }catch(err){
       console.log(err);

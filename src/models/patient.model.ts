@@ -4,16 +4,21 @@ import IPatient from '../interfaces/patient.interface';
 // Schema
 const patientSchema = new Schema({
   dni: {
-    type: String
+    type: String,
+    required: '{PATH} is required'
   },
   last_name: {
-    type: String
+    type: String,
+    required: '{PATH} is required'
   },
   first_name: {
-    type: Number
+    type: Number,
+    required: '{PATH} is required'
   },
   sex: {
-    type: Number
+    type: String,
+    enum: ['Masculino', 'Femenino', 'Otro'],
+    required: '{PATH} is required'
   },
   image: {
     type: String
