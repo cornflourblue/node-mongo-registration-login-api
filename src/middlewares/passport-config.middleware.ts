@@ -89,5 +89,15 @@ export const passportMiddlewareLocal = (req: Request, res: Response, next: NextF
 };
 
 export const passportMiddlewareJwt = (req: Request, res: Response, next: NextFunction) => {
-    authenticationMiddleware(req, res, next, 'jwt');
+    passport.authenticate('jwt', {session: false}, (err, user, info) => {
+
+        if (err) { return next(err) }
+        else if(info instanceof Error){
+            return res.status(403).json({message: 'No Autorizado'});
+        } else if (!user) {
+            return res.status(401).json(info);
+        }
+        req.user = user;
+        next();
+    })(req, res, next);
 }
