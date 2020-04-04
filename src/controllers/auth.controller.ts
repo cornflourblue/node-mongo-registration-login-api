@@ -41,6 +41,15 @@ class AuthController{
         });
     }
 
+    public logout = (req: Request, res: Response) => {
+
+        const refreshToken = req.body.refreshToken;
+        if (refreshToken in this.refreshTokens) {
+          delete this.refreshTokens[refreshToken];
+        }
+        res.sendStatus(204);
+    }
+
     public refresh = (req: Request, res: Response): Response => {
         const refreshToken = req.body.refreshToken;
 
