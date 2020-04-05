@@ -7,12 +7,12 @@ const patientSchema = new Schema({
     type: String,
     required: '{PATH} is required'
   },
-  last_name: {
+  lastName: {
     type: String,
     required: '{PATH} is required'
   },
-  first_name: {
-    type: Number,
+  firstName: {
+    type: String,
     required: '{PATH} is required'
   },
   sex: {
@@ -23,9 +23,9 @@ const patientSchema = new Schema({
   image: {
     type: String
   },
-  createdAt: { 
-    type: Date, 
-    default: Date.now 
+  createdAt: {
+    type: Date,
+    default: Date.now
   },
   updatedAt: Date,
 });
