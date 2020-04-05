@@ -6,6 +6,7 @@ import { BaseController } from '../interfaces/classes/base-controllers.interface
 // controllers
 import authController from '../controllers/auth.controller';
 import roleController from '../controllers/role.controller';
+import prescriptionController from '../controllers/prescription.controller';
 import patientController from '../controllers/patient.controller';
 import pharmacistController from '../controllers/pharmacist.controller';
 import professionalController from '../controllers/professional.controller';
@@ -36,6 +37,7 @@ class Routes {
 
     this.router.use('', passportMiddlewareJwt, this.resources('roles', roleController));
 
+    this.router.use('', passportMiddlewareJwt, this.resources('prescriptions', prescriptionController));
 
     this.router.use('', passportMiddlewareJwt, this.resources('patients', patientController));
 
