@@ -32,6 +32,4 @@ const patientSchema = new Schema({
 // Model
 const Patient: Model<IPatient> = model<IPatient>('Patient', patientSchema);
 
-
-
 export default Patient;

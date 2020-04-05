@@ -41,7 +41,9 @@ class PatientController implements BaseController{
   public getByDni = async (req: Request, res: Response): Promise<Response> => {
     try{
       const { dni } = req.params;
-      const patient: IPatient | null = await Patient.findOne({dni});
+      const patient: IPatient | null = await Patient.findOne({dni: dni});
+
+      console.log('GET PATIENT DNI ==========> ', patient);
       return res.status(200).json(patient);
     }catch(err){
       console.log(err);
