@@ -15,8 +15,6 @@ import pharmacyController from '../controllers/pharmacy.controller';
 import supplyController from '../controllers/supply.controller';
 
 
-import testController from '../controllers/test.controller';
-
 class Routes {
 	router: Router;
 	resourcesRouter: Router;
@@ -52,7 +50,7 @@ class Routes {
 
     this.router.use('', passportMiddlewareJwt, this.resources('pharmacists', pharmacistController));
     this.router.use('', passportMiddlewareJwt, this.router.get('pharmacists/getByEnrollment/:enrollment', pharmacistController.getByEnrollment));
-    
+
     this.router.use('', passportMiddlewareJwt,this.resources('pharmacies', pharmacyController));
 
     this.router.use('', passportMiddlewareJwt, this.resources('professionals', professionalController));
