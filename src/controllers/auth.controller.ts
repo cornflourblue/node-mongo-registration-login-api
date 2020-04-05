@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import IUser from '../interfaces/user.interface';
 import User from '../models/user.model';
+import IRole from '../interfaces/role.interface';
+import Role from '../models/role.model';
 
 class AuthController{
 
@@ -13,8 +15,10 @@ class AuthController{
 
     public register = async (req: Request, res: Response): Promise<Response> => {
         try{
-            const { username, email, password } = req.body;
+            const { username, email, password, roleType } = req.body;
             const newUser = new User({ username, email, password });
+            const role: IRole = await Role.schema.methods.findByRoleOrCreate(roleType);
+            newUser.roles.push(role);
             await newUser.save();
             return res.status(200).json({
                 newUser
@@ -61,9 +65,27 @@ class AuthController{
         return res.sendStatus(401);
     }
 
+    public assignRole = async (req: Request, res: Response): Promise<Response> => {
+        const { id } = req.params;
+        const { roleId } = req.body;
+        try{
+            const role: IRole | null = await Role.findOne({ _id : roleId });
+            if(role){
+                await User.findByIdAndUpdate({ _id: id },{
+                    roles: role
+                });
+            }
+            const user: IUser | null = await User.findOne({ _id : id });
+          return res.status(200).json(user);
+        }catch(err){
+          console.log(err);
+          return res.status(500).json('Server Error');
+        }
+      }
+
     private signInToken = (userId: string): any => {
         const token = JWT.sign({
-            iss: "stock.manage",
+            iss: "recetar.andes",
             sub: userId,
             iat: new Date().getTime(),
             exp: new Date().setDate(new Date().getDate() + config.TOKEN_LIFETIME)
