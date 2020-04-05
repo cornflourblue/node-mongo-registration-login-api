@@ -42,6 +42,10 @@ const userSchema = new Schema({
     minlength: [8, '{PATH} required a minimum of 8 characters'],
     set: encryptPassword
   },
+  roles: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Role'
+  }],
   createdAt: {
     type: Date,
     default: Date.now
@@ -62,8 +66,8 @@ User.schema.method('isValidPassword', async function(thisUser: IUser, password: 
 });
 
 // Model Validations
-User.schema.path('email').validate(uniqueEmail, 'This {PATH} address is already registered');
-User.schema.path('email').validate(validEmail, 'The {PATH} field most be type of email.');
+// User.schema.path('email').validate(uniqueEmail, 'This {PATH} address is already registered');
+// User.schema.path('email').validate(validEmail, 'The {PATH} field most be type of email.');
 User.schema.path('username').validate(uniqueUsername, 'This {PATH} is already registered');
 
 

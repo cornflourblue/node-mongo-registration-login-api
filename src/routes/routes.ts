@@ -29,9 +29,9 @@ class Routes {
     this.router.post('/auth/login', passportMiddlewareLocal, authController.login);
     this.router.post('/auth/logout', authController.logout);
     this.router.post('/auth/refresh', authController.refresh);
+    this.router.post('/users/:id/assign-role', authController.assignRole);
 
-
-    this.router.post('/roles/:id/assign-user', roleController.assignUser);
+    // this.router.post('/roles/:id/assign-user', roleController.assignUser);
 
     this.router.get('/patients/get-by-dni/:dni', patientController.getByDni);
 

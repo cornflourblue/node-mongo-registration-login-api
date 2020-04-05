@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import IUser from '../interfaces/user.interface';
 import User from '../models/user.model';
+import IRole from '../interfaces/role.interface';
+import Role from '../models/role.model';
 
 class AuthController{
 
@@ -13,8 +15,10 @@ class AuthController{
 
     public register = async (req: Request, res: Response): Promise<Response> => {
         try{
-            const { username, email, password } = req.body;
+            const { username, email, password, roleType } = req.body;
             const newUser = new User({ username, email, password });
+            const role: IRole = await Role.schema.methods.findByRoleOrCreate(roleType);
+            newUser.roles.push(role);
             await newUser.save();
             return res.status(200).json({
                 newUser
@@ -29,16 +33,27 @@ class AuthController{
         }
     }
 
-    public login = (req: Request, res: Response): Response => {
-        const user = req.user as IUser;
-        const token = this.signInToken(user._id);
+    public login = async (req: Request, res: Response): Promise<Response> => {
+        const { _id } = req.user as IUser;
+            try{
 
-        const refreshToken = uuidv4();
-        this.refreshTokens[refreshToken] = user._id;
-        return res.status(200).json({
-            jwt: token,
-            refreshToken: refreshToken
-        });
+                const user: IUser | null = await User.findOne({_id});
+
+                if(user){
+                    const token = this.signInToken(user._id, user.username);
+
+                    const refreshToken = uuidv4();
+                    this.refreshTokens[refreshToken] = user._id;
+                    return res.status(200).json({
+                        jwt: token,
+                        refreshToken: refreshToken
+                    });
+                }
+                throw new Error('user not found');
+            }catch(err){
+                console.log(err);
+                return res.status(500).json('Server Error');
+            }
     }
 
     public logout = (req: Request, res: Response) => {
@@ -50,21 +65,49 @@ class AuthController{
         res.sendStatus(204);
     }
 
-    public refresh = (req: Request, res: Response): Response => {
+    public refresh = async (req: Request, res: Response): Promise<Response> => {
         const refreshToken = req.body.refreshToken;
+        try{
 
-        if (refreshToken in this.refreshTokens) {
-          const token = this.signInToken(this.refreshTokens[refreshToken]);
-          return res.json({jwt: token})
+            if (refreshToken in this.refreshTokens) {
+                const user: IUser | null = await User.findOne({_id: this.refreshTokens[refreshToken] });
+                if(user){
+
+                    const token = this.signInToken(user._id, user.username);
+                    return res.json({jwt: token})
+                }
+            }
+            throw new Error('user not found');
+        }catch(err){
+            console.log(err);
+            return res.status(500).json('Server error');
         }
 
-        return res.sendStatus(401);
     }
 
-    private signInToken = (userId: string): any => {
+    public assignRole = async (req: Request, res: Response): Promise<Response> => {
+        const { id } = req.params;
+        const { roleId } = req.body;
+        try{
+            const role: IRole | null = await Role.findOne({ _id : roleId });
+            if(role){
+                await User.findByIdAndUpdate({ _id: id },{
+                    roles: role
+                });
+            }
+            const user: IUser | null = await User.findOne({ _id : id });
+          return res.status(200).json(user);
+        }catch(err){
+          console.log(err);
+          return res.status(500).json('Server Error');
+        }
+      }
+
+    private signInToken = (userId: string, username: string): any => {
         const token = JWT.sign({
-            iss: "stock.manage",
+            iss: "recetar.andes",
             sub: userId,
+            usrn: username,
             iat: new Date().getTime(),
             exp: new Date().setDate(new Date().getDate() + config.TOKEN_LIFETIME)
         }, config.JWT_SECRET, {
