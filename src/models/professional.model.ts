@@ -4,10 +4,13 @@ import IProfessional from '../interfaces/professional.interface';
 // Schema
 const professionalSchema = new Schema({
   dni: {
-    type: String
+    type: String,
   },
   enrollment: {
-    type: String
+    type: String,
+    required: '{PATH} is required',
+    index: true,
+    unique: true
   },
   last_name: {
     type: String,

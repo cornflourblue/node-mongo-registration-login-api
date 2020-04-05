@@ -5,23 +5,22 @@ import IPatient from '../interfaces/patient.interface';
 const patientSchema = new Schema({
   dni: {
     type: String,
-    required: '{PATH} is required'
+    required: '{PATH} is required',
+    index: true,
+    unique: true
   },
-  last_name: {
+  lastName: {
     type: String,
     required: '{PATH} is required'
   },
-  first_name: {
-    type: Number,
+  firstName: {
+    type: String,
     required: '{PATH} is required'
   },
   sex: {
     type: String,
     enum: ['Femenino', 'Masculino', 'Otro'],
     required: '{PATH} is required'
-  },
-  image: {
-    type: String
   },
   createdAt: { 
     type: Date, 
@@ -32,6 +31,7 @@ const patientSchema = new Schema({
 
 // Model
 const Patient: Model<IPatient> = model<IPatient>('Patient', patientSchema);
+
 
 
 export default Patient;

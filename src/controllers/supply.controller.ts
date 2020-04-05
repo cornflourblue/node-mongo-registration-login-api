@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import Supply from '../models/supply.model';
 import ISupply from '../interfaces/supply.interface';
 import { BaseController } from '../interfaces/classes/base-controllers.interface';
-import { Db } from 'mongodb';
 
 class SupplyController implements BaseController{
 
@@ -33,18 +32,6 @@ class SupplyController implements BaseController{
     try{
       const id: string = req.params.id;
       const supply: ISupply | null = await Supply.findOne({_id: id});
-      return res.status(200).json(supply);
-    }catch(err){
-      console.log(err);
-      return res.status(500).json('Server Error');
-    }
-  }
-
-  public search = async (req: Request, res: Response): Promise<Response> => {
-    try{
-      const supply = await Supply.find({$text: {$search: req.params.string}})
-      .skip(20)
-      .limit(10);
       return res.status(200).json(supply);
     }catch(err){
       console.log(err);

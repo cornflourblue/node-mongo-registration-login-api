@@ -27,8 +27,9 @@ class Routes {
     this.router.post('/auth/login', passportMiddlewareLocal, authController.login);
     this.router.post('/auth/logout', authController.logout);
     this.router.post('/auth/refresh', authController.refresh);
-
-
+    
+    this.router.get('patients/get-by-dni/:dni', patientController.getByDni);
+    
     this.router.use('', passportMiddlewareJwt, this.resources('patients', patientController));
 
     this.router.use('', passportMiddlewareJwt, this.resources('pharmacists', pharmacistController));
@@ -38,7 +39,6 @@ class Routes {
 
     this.router.use('', passportMiddlewareJwt, this.resources('professionals', professionalController));
 
-    this.router.use('', passportMiddlewareJwt, this.router.get('supplies/search', supplyController.search));
     this.router.use('', passportMiddlewareJwt, this.resources('supplies', supplyController));
   }
 

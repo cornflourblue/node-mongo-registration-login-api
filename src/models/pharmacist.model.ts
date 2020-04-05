@@ -6,6 +6,7 @@ const pharmacistSchema = new Schema({
   enrollment: {
     type: String,
     required: '{PATH} is required',
+    index: true,
     unique: true
   },
   last_name: {
