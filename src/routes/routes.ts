@@ -1,6 +1,7 @@
 
 import { Router } from 'express';
 import { passportMiddlewareLocal, passportMiddlewareJwt } from '../middlewares/passport-config.middleware';
+import { pharmacistRoleMiddleware, professionalRoleMiddleware } from '../middlewares/roles.middleware';
 // interfaces
 import { BaseController } from '../interfaces/classes/base-controllers.interface';
 // controllers
@@ -10,6 +11,9 @@ import patientController from '../controllers/patient.controller';
 import pharmacistController from '../controllers/pharmacist.controller';
 import professionalController from '../controllers/professional.controller';
 import pharmacyController from '../controllers/pharmacy.controller';
+
+
+import testController from '../controllers/test.controller';
 
 class Routes {
 	router: Router;
@@ -28,6 +32,10 @@ class Routes {
     this.router.post('/auth/logout', authController.logout);
     this.router.post('/auth/refresh', authController.refresh);
     this.router.post('/users/:id/assign-role', authController.assignRole);
+
+    // pharmacistRoleMiddleware, professionalRoleMiddleware 2 middlewares, para determinar a que routa tiene accesos el farmaceutico y/o profesional
+    // ejemplo:
+    // this.router.post('/test', passportMiddlewareJwt, pharmacistRoleMiddleware, testController.tmp);
 
     // this.router.post('/roles/:id/assign-user', roleController.assignUser);
 
