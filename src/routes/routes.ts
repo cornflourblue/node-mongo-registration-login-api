@@ -30,7 +30,12 @@ class Routes {
 
 
     this.router.post('/roles/:id/assign-user', roleController.assignUser);
+
+    this.router.get('/patients/get-by-dni/:dni', patientController.getByDni);
+
     this.router.use('', passportMiddlewareJwt, this.resources('roles', roleController));
+
+
 
     this.router.use('', passportMiddlewareJwt, this.resources('patients', patientController));
 
