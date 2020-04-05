@@ -71,14 +71,9 @@ User.schema.method('isValidPassword', async function(thisUser: IUser, password: 
 User.schema.path('username').validate(uniqueUsername, 'This {PATH} is already registered');
 User.schema.method('hasRole', async function(userId: string, rolesType: string): Promise<boolean>{
   try{
-  //   const user2: IUser[] | null = await User.find({ _id: userId, 'roles.role': {$eq: rolesType}});
-  //   const user: IUser | null = await User.findOne({ _id: userId}).populate({
-  //     path: 'roles',
-  //     match: { role: { $eq: rolesType } }
-  //   });
-  //   console.log('ROLE TYPE ===================>', rolesType, user2, userId);
-  //   return user. && user.roles.length > 0;
-    return true;
+    const user: IUser | null = await User.findOne({ _id: userId}).populate('role', 'role');
+
+    return (!!user && (user?.role.role == rolesType));
   } catch(err){
     throw new Error(err);
   }
