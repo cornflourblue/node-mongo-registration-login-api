@@ -24,6 +24,9 @@ const prescriptionSchema = new Schema({
     enum: ['Pendiente', 'Dispensada'],
     default: 'Pendiente'
   },
+  professionalFullname: {
+    type: String,
+  },
   date: { 
     type: Date, 
     default: Date.now,

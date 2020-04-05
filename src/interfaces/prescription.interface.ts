@@ -7,6 +7,7 @@ export default interface IPrescription extends Document {
   supplies: ISupply[];
   status: string;
   date: Date;
+  professionalFullname: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

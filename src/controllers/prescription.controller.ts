@@ -11,12 +11,13 @@ class PrescriptionController implements BaseController{
   }
 
   public create = async (req: Request, res: Response): Promise<Response> => {
-    const { user_id, patient_id, date, supplies} = req.body;
+    const { user_id, patient_id, date, supplies, professionalFullname} = req.body;
     const newPrescription: IPrescription = new Prescription({
       user_id,
       patient_id,
       date,
-      supplies
+      supplies,
+      professionalFullname
     });
     try{
       await newPrescription.save();
@@ -52,13 +53,14 @@ class PrescriptionController implements BaseController{
   public update = async (req: Request, res: Response) => {
     try{
       const id: string = req.params.id;
-      const { user_id, patient_id, date, supplies, status } = req.body;
+      const { user_id, patient_id, date, supplies, status, professionalFullname } = req.body;
       await Prescription.findByIdAndUpdate(id, {
         user_id,
         patient_id,
         date,
         supplies,
-        status
+        status,
+        professionalFullname
       });
       const prescription = await Prescription.findOne({_id: id});
       return res.status(200).json(prescription);
