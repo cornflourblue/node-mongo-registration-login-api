@@ -18,7 +18,7 @@ class AuthController{
             const { username, email, password, roleType } = req.body;
             const newUser = new User({ username, email, password });
             const role: IRole = await Role.schema.methods.findByRoleOrCreate(roleType);
-            newUser.roles.push(role);
+            newUser.role = role;
             await newUser.save();
             return res.status(200).json({
                 newUser
