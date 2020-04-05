@@ -21,5 +21,17 @@ const roleSchema = new Schema({
 // Model
 const Role: Model<IRole> = model<IRole>('Role', roleSchema);
 
+Role.schema.method('findByRoleOrCreate', async function(roleType: string): Promise<IRole>{
+  try{
+    let role: IRole | null = await Role.findOne({ role: roleType});
+    if(!role){
+      role = new Role({ role: roleType});
+      await role.save();
+    }
+    return role;
+  } catch(err){
+    throw new Error(err);
+  }
+});
 
 export default Role;
