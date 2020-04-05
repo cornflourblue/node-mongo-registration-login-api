@@ -6,6 +6,7 @@ const pharmacySchema = new Schema({
   cuit: {
     type: String,
     required: '{PATH} is required',
+    index: true,
     unique: true
   },
   name: {

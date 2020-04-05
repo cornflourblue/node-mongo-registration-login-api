@@ -6,6 +6,7 @@ const pharmacistSchema = new Schema({
   enrollment: {
     type: String,
     required: '{PATH} is required',
+    index: true,
     unique: true
   },
   last_name: {
@@ -18,7 +19,7 @@ const pharmacistSchema = new Schema({
   },
   sex: {
     type: String,
-    enum: ['Masculino', 'Femenino', 'Otro'],
+    enum: ['Femenino', 'Masculino', 'Otro'],
     required: '{PATH} is required'
   },
   image: {

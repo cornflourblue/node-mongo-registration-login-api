@@ -54,7 +54,7 @@ passport.use(new LocalStrategy({
         if(!user){
             user = await User.findOne({ username: identifier });
             if(!user){
-                return done(null, false, {message: 'The username/email or password you entered is incorrect. Please try again'});
+                return done(null, false, {message: 'El usuario o contraseña que has ingresado es incorrecto. Por favor intenta denuevo.'});
             }
         }
 
@@ -63,7 +63,7 @@ passport.use(new LocalStrategy({
 
         // if not, handle it
         if(!isMatch){
-            return done(null, false, {message: 'The username/email or password you entered is incorrect. Please try again'});
+            return done(null, false, {message: 'El usuario o contraseña que has ingresado es incorrecto. Por favor intenta denuevo.'});
         }
         // otherwise, return the user
         done(null, user);

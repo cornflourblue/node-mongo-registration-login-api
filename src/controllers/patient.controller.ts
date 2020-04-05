@@ -11,13 +11,12 @@ class PatientController implements BaseController{
   }
 
   public create = async (req: Request, res: Response): Promise<Response> => {
-    const { dni, lastName, firstName, sex, image } = req.body;
+    const { dni, lastName, firstName, sex} = req.body;
     const newPatient: IPatient = new Patient({
       dni,
       lastName,
-      firstName,
-      sex,
-      image
+      firstName, 
+      sex
     });
     try{
       await newPatient.save();
@@ -44,7 +43,6 @@ class PatientController implements BaseController{
       const { dni } = req.params;
       const patient: IPatient | null = await Patient.findOne({dni: dni});
 
-      console.log('GET PATIENT DNI ==========> ', patient);
       return res.status(200).json(patient);
     }catch(err){
       console.log(err);

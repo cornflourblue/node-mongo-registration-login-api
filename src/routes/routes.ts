@@ -7,10 +7,12 @@ import { BaseController } from '../interfaces/classes/base-controllers.interface
 // controllers
 import authController from '../controllers/auth.controller';
 import roleController from '../controllers/role.controller';
+import prescriptionController from '../controllers/prescription.controller';
 import patientController from '../controllers/patient.controller';
 import pharmacistController from '../controllers/pharmacist.controller';
 import professionalController from '../controllers/professional.controller';
 import pharmacyController from '../controllers/pharmacy.controller';
+import supplyController from '../controllers/supply.controller';
 
 
 import testController from '../controllers/test.controller';
@@ -43,16 +45,19 @@ class Routes {
 
     this.router.use('', passportMiddlewareJwt, this.resources('roles', roleController));
 
-
+    this.router.get('/prescriptions/get-by-patient-id/:patient_id', prescriptionController.getByPatientId);
+    this.router.use('', passportMiddlewareJwt, this.resources('prescriptions', prescriptionController));
 
     this.router.use('', passportMiddlewareJwt, this.resources('patients', patientController));
 
     this.router.use('', passportMiddlewareJwt, this.resources('pharmacists', pharmacistController));
     this.router.use('', passportMiddlewareJwt, this.router.get('pharmacists/getByEnrollment/:enrollment', pharmacistController.getByEnrollment));
+    
     this.router.use('', passportMiddlewareJwt,this.resources('pharmacies', pharmacyController));
 
     this.router.use('', passportMiddlewareJwt, this.resources('professionals', professionalController));
-    this.router.use('', passportMiddlewareJwt, this.resources('professionals', professionalController));
+
+    this.router.use('', passportMiddlewareJwt, this.resources('supplies', supplyController));
   }
 
   // resources function make easy generates CRUD routes

@@ -5,7 +5,6 @@ export default interface IPatient extends Document {
   lastName: string;
   firstName: string;
   sex: string;
-  image?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
