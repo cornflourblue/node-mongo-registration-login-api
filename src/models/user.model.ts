@@ -42,10 +42,10 @@ const userSchema = new Schema({
     minlength: [8, '{PATH} required a minimum of 8 characters'],
     set: encryptPassword
   },
-  roles: [{
+  role: {
     type: Schema.Types.ObjectId,
     ref: 'Role'
-  }],
+  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -69,7 +69,20 @@ User.schema.method('isValidPassword', async function(thisUser: IUser, password: 
 // User.schema.path('email').validate(uniqueEmail, 'This {PATH} address is already registered');
 // User.schema.path('email').validate(validEmail, 'The {PATH} field most be type of email.');
 User.schema.path('username').validate(uniqueUsername, 'This {PATH} is already registered');
-
+User.schema.method('hasRole', async function(userId: string, rolesType: string): Promise<boolean>{
+  try{
+  //   const user2: IUser[] | null = await User.find({ _id: userId, 'roles.role': {$eq: rolesType}});
+  //   const user: IUser | null = await User.findOne({ _id: userId}).populate({
+  //     path: 'roles',
+  //     match: { role: { $eq: rolesType } }
+  //   });
+  //   console.log('ROLE TYPE ===================>', rolesType, user2, userId);
+  //   return user. && user.roles.length > 0;
+    return true;
+  } catch(err){
+    throw new Error(err);
+  }
+});
 
 
 export default User;
