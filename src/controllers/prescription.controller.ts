@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import Prescription from '../models/prescription.model';
 import IPrescription from '../interfaces/prescription.interface';
 import { BaseController } from '../interfaces/classes/base-controllers.interface';
-
+import { Types } from 'mongoose';
 class PrescriptionController implements BaseController{
 
   public index = async (req: Request, res: Response): Promise<Response> => {
@@ -11,10 +11,10 @@ class PrescriptionController implements BaseController{
   }
 
   public create = async (req: Request, res: Response): Promise<Response> => {
-    const { user, patient, date, supplies} = req.body;
+    const { user_id, patient_id, date, supplies} = req.body;
     const newPrescription: IPrescription = new Prescription({
-      user,
-      patient,
+      user_id,
+      patient_id,
       date,
       supplies
     });
@@ -38,10 +38,10 @@ class PrescriptionController implements BaseController{
     }
   }
 
-  public getByDni = async (req: Request, res: Response): Promise<Response> => {
+  public getByPatientId = async (req: Request, res: Response): Promise<Response> => {
     try{
-      const { dni } = req.params;
-      const prescription: IPrescription | null = await Prescription.findOne({dni: dni});
+      const { patient_id } =  req.params;
+      const prescription: IPrescription[] | null = await Prescription.find({patient_id: patient_id});
       return res.status(200).json(prescription);
     }catch(err){
       console.log(err);
@@ -52,10 +52,10 @@ class PrescriptionController implements BaseController{
   public update = async (req: Request, res: Response) => {
     try{
       const id: string = req.params.id;
-      const { user, patient, date, supplies, status } = req.body;
+      const { user_id, patient_id, date, supplies, status } = req.body;
       await Prescription.findByIdAndUpdate(id, {
-        user,
-        patient,
+        user_id,
+        patient_id,
         date,
         supplies,
         status
