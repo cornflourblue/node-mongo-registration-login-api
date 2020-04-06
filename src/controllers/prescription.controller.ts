@@ -2,7 +2,9 @@ import { Request, Response } from 'express';
 import Prescription from '../models/prescription.model';
 import IPrescription from '../interfaces/prescription.interface';
 import { BaseController } from '../interfaces/classes/base-controllers.interface';
-import { Types } from 'mongoose';
+import ISupply  from '../interfaces/supply.interface';
+import Supply from '../models/supply.model';
+
 class PrescriptionController implements BaseController{
 
   public index = async (req: Request, res: Response): Promise<Response> => {
@@ -12,15 +14,24 @@ class PrescriptionController implements BaseController{
 
   public create = async (req: Request, res: Response): Promise<Response> => {
     const { user_id, patient_id, date, supplies, professionalFullname} = req.body;
+
     const newPrescription: IPrescription = new Prescription({
       user_id,
       patient_id,
       date,
-      supplies,
       professionalFullname
     });
     try{
       await newPrescription.save();
+      let supply: ISupply | null;
+      supplies.forEach( async (sup: any) => {
+        supply = await Supply.findOne({ _id: sup.supply._id});
+        if(supply){
+          newPrescription.supplies.push(supply);
+          await newPrescription.save();
+        }
+      });
+
       return res.status(200).json({ newPrescription });
     }catch(err){
       console.log(err);
