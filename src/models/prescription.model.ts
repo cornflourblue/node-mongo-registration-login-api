@@ -27,6 +27,10 @@ const prescriptionSchema = new Schema({
   professionalFullname: {
     type: String,
   },
+  dispensedBy: {
+    type: Schema.Types.ObjectId,
+    ref: "User"
+  },
   date: { 
     type: Date, 
     default: Date.now,

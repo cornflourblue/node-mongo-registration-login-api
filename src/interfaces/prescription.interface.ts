@@ -8,6 +8,7 @@ export default interface IPrescription extends Document {
   status: string;
   date: Date;
   professionalFullname: string;
+  dispensedBy: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

@@ -64,14 +64,15 @@ class PrescriptionController implements BaseController{
   public update = async (req: Request, res: Response) => {
     try{
       const id: string = req.params.id;
-      const { user_id, patient_id, date, supplies, status, professionalFullname } = req.body;
+      const { user_id, patient_id, date, supplies, status, professionalFullname, dispensedBy } = req.body;
       await Prescription.findByIdAndUpdate(id, {
         user_id,
         patient_id,
         date,
         supplies,
         status,
-        professionalFullname
+        professionalFullname,
+        dispensedBy
       });
       const prescription = await Prescription.findOne({_id: id});
       return res.status(200).json(prescription);
