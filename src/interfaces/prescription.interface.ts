@@ -3,7 +3,7 @@ import ISupply from './supply.interface';
 
 export default interface IPrescription extends Document {
   user_id: string;
-  patient_id: string;
+  patientId: string;
   supplies: ISupply[];
   status: string;
   date: Date;
