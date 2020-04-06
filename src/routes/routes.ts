@@ -41,8 +41,8 @@ class Routes {
 
     this.router.get('/patients/get-by-dni/:dni', patientController.getByDni);
 
-    this.router.get('/prescriptions/get-by-patient-and-date/:patient_id?:date', prescriptionController.getByPatientAndDate);
-    this.router.get('/prescriptions/get-by-patient-id/:patient_id', prescriptionController.getByPatientId);
+    this.router.get('/prescriptions/get-by-patient-and-date/:patientId?:date', prescriptionController.getByPatientAndDate);
+    this.router.get('/prescriptions/get-by-patient-id/:patientId', prescriptionController.getByPatientId);
     this.router.get('/supplies/get-by-name', supplyController.getByName);
 
     this.router.use('', passportMiddlewareJwt, this.resources('roles', roleController));
