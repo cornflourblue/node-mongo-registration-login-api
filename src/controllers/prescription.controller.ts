@@ -21,16 +21,14 @@ class PrescriptionController implements BaseController{
       professionalFullname
     });
     try{
-      await newPrescription.save();
-      let supply: ISupply | null;
-      supplies.forEach( async (sup: any) => {
-        supply = await Supply.findOne({ _id: sup.supply._id});
-        if(supply){
-          newPrescription.supplies.push(supply);
-          await newPrescription.save();
+      await Promise.all( supplies.map( async (sup: any) => {
+        const sp: ISupply | null = await Supply.findOne({ _id: sup.supply._id});
+        if(sp){
+          newPrescription.supplies.push(sp);
         }
-      });
 
+      }));
+      await newPrescription.save();
       return res.status(200).json({ newPrescription });
     }catch(err){
       console.log(err);
