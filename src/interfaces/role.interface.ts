@@ -6,4 +6,5 @@ export default interface IRole extends Document {
   users: IUser[];
   createdAt?: Date;
   updatedAt?: Date;
+  findByRoleOrCreate(roleType: string): Promise<IRole>;
 }

@@ -1,6 +1,7 @@
 
 import { Router } from 'express';
 import { passportMiddlewareLocal, passportMiddlewareJwt } from '../middlewares/passport-config.middleware';
+import { pharmacistRoleMiddleware, professionalRoleMiddleware } from '../middlewares/roles.middleware';
 // interfaces
 import { BaseController } from '../interfaces/classes/base-controllers.interface';
 // controllers
@@ -12,6 +13,7 @@ import pharmacistController from '../controllers/pharmacist.controller';
 import professionalController from '../controllers/professional.controller';
 import pharmacyController from '../controllers/pharmacy.controller';
 import supplyController from '../controllers/supply.controller';
+
 
 class Routes {
 	router: Router;
@@ -31,20 +33,26 @@ class Routes {
     this.router.post('/auth/refresh', authController.refresh);
     this.router.post('/users/:id/assign-role', authController.assignRole);
 
+    // pharmacistRoleMiddleware, professionalRoleMiddleware 2 middlewares, para determinar a que routa tiene accesos el farmaceutico y/o profesional
+    // ejemplo:
+    // this.router.post('/test', passportMiddlewareJwt, pharmacistRoleMiddleware, testController.tmp);
+
     // this.router.post('/roles/:id/assign-user', roleController.assignUser);
 
     this.router.get('/patients/get-by-dni/:dni', patientController.getByDni);
 
+    this.router.get('/prescriptions/get-by-patient-id/:patient_id', prescriptionController.getByPatientId);
+    this.router.get('/supplies/get-by-name', supplyController.getByName);
+
     this.router.use('', passportMiddlewareJwt, this.resources('roles', roleController));
 
-    this.router.get('/prescriptions/get-by-patient-id/:patient_id', prescriptionController.getByPatientId);
     this.router.use('', passportMiddlewareJwt, this.resources('prescriptions', prescriptionController));
 
     this.router.use('', passportMiddlewareJwt, this.resources('patients', patientController));
 
     this.router.use('', passportMiddlewareJwt, this.resources('pharmacists', pharmacistController));
     this.router.use('', passportMiddlewareJwt, this.router.get('pharmacists/getByEnrollment/:enrollment', pharmacistController.getByEnrollment));
-    
+
     this.router.use('', passportMiddlewareJwt,this.resources('pharmacies', pharmacyController));
 
     this.router.use('', passportMiddlewareJwt, this.resources('professionals', professionalController));

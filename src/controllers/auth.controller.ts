@@ -18,7 +18,7 @@ class AuthController{
             const { username, email, password, roleType } = req.body;
             const newUser = new User({ username, email, password });
             const role: IRole = await Role.schema.methods.findByRoleOrCreate(roleType);
-            newUser.roles.push(role);
+            newUser.role = role;
             await newUser.save();
             return res.status(200).json({
                 newUser
@@ -37,10 +37,10 @@ class AuthController{
         const { _id } = req.user as IUser;
             try{
 
-                const user: IUser | null = await User.findOne({_id});
+                const user: IUser | null = await User.findOne({_id}).populate('role', 'role');
 
                 if(user){
-                    const token = this.signInToken(user._id, user.username);
+                    const token = this.signInToken(user._id, user.username, user.role.role);
 
                     const refreshToken = uuidv4();
                     this.refreshTokens[refreshToken] = user._id;
@@ -70,10 +70,10 @@ class AuthController{
         try{
 
             if (refreshToken in this.refreshTokens) {
-                const user: IUser | null = await User.findOne({_id: this.refreshTokens[refreshToken] });
+                const user: IUser | null = await User.findOne({_id: this.refreshTokens[refreshToken] }).populate('role', 'role');
                 if(user){
 
-                    const token = this.signInToken(user._id, user.username);
+                    const token = this.signInToken(user._id, user.username, user.role.role);
                     return res.json({jwt: token})
                 }
             }
@@ -103,11 +103,12 @@ class AuthController{
         }
       }
 
-    private signInToken = (userId: string, username: string): any => {
+    private signInToken = (userId: string, username: string, role: string): any => {
         const token = JWT.sign({
             iss: "recetar.andes",
             sub: userId,
             usrn: username,
+            rl: role,
             iat: new Date().getTime(),
             exp: new Date().setDate(new Date().getDate() + config.TOKEN_LIFETIME)
         }, config.JWT_SECRET, {
