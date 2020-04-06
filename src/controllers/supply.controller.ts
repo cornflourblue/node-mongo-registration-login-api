@@ -15,7 +15,7 @@ class SupplyController implements BaseController{
     const newSupply: ISupply = new Supply({
       id,
       name,
-      unity, 
+      unity,
       sex,
       image
     });
@@ -69,6 +69,18 @@ class SupplyController implements BaseController{
       return res.status(500).json('Server Error');
     }
   }
+
+  public getByName = async (req: Request, res: Response): Promise<Response> => {
+    try{
+      const { supplyName } = req.query;
+      const supplies: ISupply[] = await Supply.find({name: { $regex: new RegExp( supplyName, "ig")}  }).select('name').limit(10);
+      return res.status(200).json(supplies);
+    }catch(err){
+      console.log(err);
+      return res.status(500).json('Server Error');
+    }
+  }
+
 }
 
 export default new SupplyController();

@@ -41,9 +41,11 @@ class Routes {
 
     this.router.get('/patients/get-by-dni/:dni', patientController.getByDni);
 
+    this.router.get('/prescriptions/get-by-patient-id/:patient_id', prescriptionController.getByPatientId);
+    this.router.get('/supplies/get-by-name', supplyController.getByName);
+
     this.router.use('', passportMiddlewareJwt, this.resources('roles', roleController));
 
-    this.router.get('/prescriptions/get-by-patient-id/:patient_id', prescriptionController.getByPatientId);
     this.router.use('', passportMiddlewareJwt, this.resources('prescriptions', prescriptionController));
 
     this.router.use('', passportMiddlewareJwt, this.resources('patients', patientController));
