@@ -8,8 +8,8 @@ const prescriptionSchema = new Schema({
     ref: "User",
     required: '{PATH} is required'
   },
-  patientId: {
-    type: String,
+  patient: {
+    type: Schema.Types.ObjectId,
     ref: "Patient",
     required: '{PATH} is required'
   },
@@ -31,14 +31,14 @@ const prescriptionSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User"
   },
-  date: { 
-    type: Date, 
+  date: {
+    type: Date,
     default: Date.now,
     required: '{PATH} is required'
   },
-  createdAt: { 
-    type: Date, 
-    default: Date.now 
+  createdAt: {
+    type: Date,
+    default: Date.now
   },
   updatedAt: Date,
 });

@@ -4,6 +4,7 @@ import IPrescription from '../interfaces/prescription.interface';
 import { BaseController } from '../interfaces/classes/base-controllers.interface';
 import ISupply  from '../interfaces/supply.interface';
 import Supply from '../models/supply.model';
+import IPatient from '../interfaces/patient.interface';
 
 class PrescriptionController implements BaseController{
 
@@ -13,10 +14,10 @@ class PrescriptionController implements BaseController{
   }
 
   public create = async (req: Request, res: Response): Promise<Response> => {
-    const { user_id, patientId, date, supplies, professionalFullname} = req.body;
+    const { user_id, patient, date, supplies, professionalFullname} = req.body;
     const newPrescription: IPrescription = new Prescription({
       user_id,
-      patientId,
+      patient,
       date,
       professionalFullname
     });
@@ -49,8 +50,8 @@ class PrescriptionController implements BaseController{
 
   public getByPatientId = async (req: Request, res: Response): Promise<Response> => {
     try{
-      const { patientId } =  req.params;
-      const prescription: IPrescription[] | null = await Prescription.find({patientId: patientId}).populate('supplies', 'name');
+      const patient_id: IPatient =  <IPatient> {_id: req.params.patient_id};
+      const prescription: IPrescription[] | null = await Prescription.find({patient: patient_id}).populate('supplies', 'name');
       return res.status(200).json(prescription);
     }catch(err){
       console.log(err);
@@ -60,9 +61,9 @@ class PrescriptionController implements BaseController{
 
   public getByPatientAndDate = async (req: Request, res: Response): Promise<Response> => {
     try{
-      const { patientId, date } =  req.params;
+      const { patient, date } =  req.params;
       const prescription: IPrescription[] | null = await Prescription.find( //query today up to tonight
-        {"created_on": {"$gte": date, "$lt": date}}, {patientId: patientId}
+        {"created_on": {"$gte": date, "$lt": date}}, {patient: patient}
       )
       return res.status(200).json(prescription);
     }catch(err){
@@ -74,10 +75,10 @@ class PrescriptionController implements BaseController{
   public update = async (req: Request, res: Response) => {
     try{
       const id: string = req.params.id;
-      const { user_id, patientId, date, supplies, status, professionalFullname, dispensedBy } = req.body;
+      const { user_id, patient, date, supplies, status, professionalFullname, dispensedBy } = req.body;
       await Prescription.findByIdAndUpdate(id, {
         user_id,
-        patientId,
+        patient,
         date,
         supplies,
         status,
