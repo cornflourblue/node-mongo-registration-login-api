@@ -8,8 +8,8 @@ const prescriptionSchema = new Schema({
     ref: "User",
     required: '{PATH} is required'
   },
-  patientId: {
-    type: String,
+  patient: {
+    type: Schema.Types.ObjectId,
     ref: "Patient",
     required: '{PATH} is required'
   },
