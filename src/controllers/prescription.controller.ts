@@ -51,7 +51,9 @@ class PrescriptionController implements BaseController{
   public getByPatientId = async (req: Request, res: Response): Promise<Response> => {
     try{
       const patient_id: IPatient =  <IPatient> {_id: req.params.patient_id};
-      const prescription: IPrescription[] | null = await Prescription.find({patient: patient_id}).populate('supplies', 'name');
+      const prescription: IPrescription[] | null = await Prescription.find({patient: patient_id})
+        .populate('supplies', 'name')
+        .populate('patient');
       return res.status(200).json(prescription);
     }catch(err){
       console.log(err);
