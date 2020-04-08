@@ -5,6 +5,7 @@ import { BaseController } from '../interfaces/classes/base-controllers.interface
 import ISupply  from '../interfaces/supply.interface';
 import Supply from '../models/supply.model';
 import IPatient from '../interfaces/patient.interface';
+import Patient from '../models/patient.model';
 
 class PrescriptionController implements BaseController{
 
@@ -15,20 +16,31 @@ class PrescriptionController implements BaseController{
 
   public create = async (req: Request, res: Response): Promise<Response> => {
     const { user_id, patient, date, supplies, professionalFullname} = req.body;
+
+    const myPatient: IPatient = await Patient.schema.methods.findOrCreate(patient);
     const newPrescription: IPrescription = new Prescription({
       user_id,
-      patient,
+      patient: myPatient,
       date,
       professionalFullname
     });
     try{
+      const errors: any[] = [];
       await Promise.all( supplies.map( async (sup: any) => {
         const sp: ISupply | null = await Supply.findOne({ _id: sup.supply._id});
+
         if(sp){
           newPrescription.supplies.push(sp);
+        }else{
+
+          errors.push({supply: sup.supply, message: 'Este medicamento no fue encontrado, por favor seleccionar un medicamento válido.'});
         }
 
       }));
+      if(errors.length){
+        return res.status(422).json(errors);
+      }
+
       await newPrescription.save();
       return res.status(200).json({ newPrescription });
     }catch(err){

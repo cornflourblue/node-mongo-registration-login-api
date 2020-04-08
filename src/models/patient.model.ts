@@ -22,14 +22,27 @@ const patientSchema = new Schema({
     enum: ['Femenino', 'Masculino', 'Otro'],
     required: '{PATH} is required'
   },
-  createdAt: { 
-    type: Date, 
-    default: Date.now 
+  createdAt: {
+    type: Date,
+    default: Date.now
   },
   updatedAt: Date,
 });
 
 // Model
 const Patient: Model<IPatient> = model<IPatient>('Patient', patientSchema);
+
+Patient.schema.method('findOrCreate', async function(patientParam: IPatient): Promise<IPatient>{
+  try{
+    let patient: IPatient | null = await Patient.findOne({ dni: patientParam.dni});
+    if(!patient){
+      patient = new Patient(patientParam);
+      await patient.save();
+    }
+    return patient;
+  } catch(err){
+    throw new Error(err);
+  }
+});
 
 export default Patient;
