@@ -15,8 +15,8 @@ class AuthController{
 
     public register = async (req: Request, res: Response): Promise<Response> => {
         try{
-            const { username, email, password, roleType } = req.body;
-            const newUser = new User({ username, email, password });
+            const { username, email, enrollment, cuil, businessName, password, roleType } = req.body;
+            const newUser = new User({ username, email, password, enrollment, cuil, businessName });
             const role: IRole = await Role.schema.methods.findByRoleOrCreate(roleType);
             newUser.role = role;
             await newUser.save();

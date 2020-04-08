@@ -36,6 +36,15 @@ const userSchema = new Schema({
   email: {
     type: String
   },
+  enrollment: {
+    type: String
+  },
+  cuil: {
+    type: String
+  },
+  businessName: {
+    type: String
+  },
   password: {
     type: String,
     required: '{PATH} is required is required',
