@@ -15,14 +15,15 @@ class PrescriptionController implements BaseController{
   }
 
   public create = async (req: Request, res: Response): Promise<Response> => {
-    const { user_id, patient, date, supplies, professionalFullname} = req.body;
+    const { user_id, patient, date, supplies, professionalFullname, observation} = req.body;
 
     const myPatient: IPatient = await Patient.schema.methods.findOrCreate(patient);
     const newPrescription: IPrescription = new Prescription({
       user_id,
       patient: myPatient,
       date,
-      professionalFullname
+      professionalFullname,
+      observation
     });
     try{
       const errors: any[] = [];
