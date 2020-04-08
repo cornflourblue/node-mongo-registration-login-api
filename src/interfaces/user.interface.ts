@@ -5,6 +5,9 @@ export default interface IUser extends Document{
     email: string;
     password: string;
     role: IRole;
+    enrollment?: string;
+    cuil?: string;
+    businessName?: string;
     createdAt?: Date;
     updatedAt?: Date;
     isValidPassword(thisUser: IUser, password: string): Promise<boolean>;
