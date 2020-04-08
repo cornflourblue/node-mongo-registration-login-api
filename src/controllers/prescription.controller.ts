@@ -62,7 +62,7 @@ class PrescriptionController implements BaseController{
     try{
       const patient_id: IPatient =  <IPatient> {_id: req.params.patient_id};
       const prescription: IPrescription[] | null = await Prescription.find({patient: patient_id})
-        .populate('supplies', 'name')
+        .populate("supplies.supply", { name: 1, quantity: 1 })
         .populate('patient');
       return res.status(200).json(prescription);
     }catch(err){
