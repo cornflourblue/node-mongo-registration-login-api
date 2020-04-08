@@ -7,4 +7,5 @@ export default interface IPatient extends Document {
   sex: string;
   createdAt?: Date;
   updatedAt?: Date;
+  findOrCreate(patientParam: IPatient): Promise<IPatient>;
 }
