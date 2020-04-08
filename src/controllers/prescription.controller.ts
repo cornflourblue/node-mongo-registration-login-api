@@ -63,10 +63,13 @@ class PrescriptionController implements BaseController{
 
   public getByPatientAndDate = async (req: Request, res: Response): Promise<Response> => {
     try{
-      const { patient, date } =  req.params;
-      const prescription: IPrescription[] | null = await Prescription.find( //query today up to tonight
-        {"created_on": {"$gte": date, "$lt": date}}, {patient: patient}
-      )
+      const patient: IPatient =  <IPatient> {_id: req.params.patientId};
+      const date: Date = new Date(req.params.date);
+      const prescription: IPrescription[] | null = await Prescription.find({
+        "date": {
+          "$gte": new Date(date),
+        }},{"patient_id": patient._id}
+      ).populate('supplies', 'name').populate('patient');
       return res.status(200).json(prescription);
     }catch(err){
       console.log(err);
