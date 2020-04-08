@@ -30,12 +30,10 @@ class PrescriptionController implements BaseController{
         const sp: ISupply | null = await Supply.findOne({ _id: sup.supply._id});
 
         if(sp){
-          newPrescription.supplies.push(sp);
+          newPrescription.supplies.push({supply: sp, quantity: sup.quantity});
         }else{
-
           errors.push({supply: sup.supply, message: 'Este medicamento no fue encontrado, por favor seleccionar un medicamento válido.'});
         }
-
       }));
       if(errors.length){
         return res.status(422).json(errors);

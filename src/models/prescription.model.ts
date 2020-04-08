@@ -15,8 +15,14 @@ const prescriptionSchema = new Schema({
   },
   supplies: [
     {
-      type: Schema.Types.ObjectId,
-      ref: "Supply"
+      supply:{
+        type: Schema.Types.ObjectId,
+        ref: "Supply"
+      },
+      quantity:{
+        type: Number,
+        required: '{PATH} is required'
+      }
     }
   ],
   status: {
@@ -30,6 +36,9 @@ const prescriptionSchema = new Schema({
   dispensedBy: {
     type: Schema.Types.ObjectId,
     ref: "User"
+  },
+  observation: {
+    type: String,
   },
   date: {
     type: Date,

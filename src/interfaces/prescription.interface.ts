@@ -5,10 +5,14 @@ import IPatient from './patient.interface';
 export default interface IPrescription extends Document {
   user_id: string;
   patient: IPatient;
-  supplies: ISupply[];
+  supplies: [{
+    supply: ISupply,
+    quantity: number
+  }];
   status: string;
   date: Date;
   professionalFullname: string;
+  observation?: string;
   dispensedBy: string;
   createdAt?: Date;
   updatedAt?: Date;
