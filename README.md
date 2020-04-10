@@ -1,3 +1,3 @@
-# prescription-validator-api
+# RecetAR API
 
-NodeJS + MongoDB API for Prescription Management
+NodeJS + MongoDB API for Prescriptions Management
