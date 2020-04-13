@@ -18,8 +18,10 @@ class AuthController{
             const { username, email, enrollment, cuil, businessName, password, roleType } = req.body;
             const newUser = new User({ username, email, password, enrollment, cuil, businessName });
             const role: IRole = await Role.schema.methods.findByRoleOrCreate(roleType);
-            newUser.role = role;
+            newUser.roles.push(role);
+            role.users.push(newUser);
             await newUser.save();
+            await role.save();
             return res.status(200).json({
                 newUser
             });
@@ -37,10 +39,15 @@ class AuthController{
         const { _id } = req.user as IUser;
             try{
 
-                const user: IUser | null = await User.findOne({_id}).populate('role', 'role');
+                const user: IUser | null = await User.findOne({_id}).populate({path: 'roles', select: 'role'});
 
                 if(user){
-                    const token = this.signInToken(user._id, user.username, user.role.role);
+                    const roles: string | string[] = [];
+                    await Promise.all(user.roles.map( async (role) => {
+                        roles.push(role.role);
+                    }));
+                    const token = this.signInToken(user._id, user.username, roles);
+                    // const token = this.signInToken(user._id, user.username, user.role.role);
 
                     const refreshToken = uuidv4();
                     this.refreshTokens[refreshToken] = user._id;
@@ -70,10 +77,15 @@ class AuthController{
         try{
 
             if (refreshToken in this.refreshTokens) {
-                const user: IUser | null = await User.findOne({_id: this.refreshTokens[refreshToken] }).populate('role', 'role');
+                const user: IUser | null = await User.findOne({_id: this.refreshTokens[refreshToken] }).populate({path: 'roles', select: 'role'});
                 if(user){
+                    const roles: string | string[] = [];
+                    await Promise.all(user.roles.map( async (role) => {
+                        roles.push(role.role);
+                    }));
 
-                    const token = this.signInToken(user._id, user.username, user.role.role);
+                    // const token = this.signInToken(user._id, user.username, user.role.role);
+                    const token = this.signInToken(user._id, user.username, roles);
                     return res.json({jwt: token})
                 }
             }
@@ -103,7 +115,7 @@ class AuthController{
         }
       }
 
-    private signInToken = (userId: string, username: string, role: string): any => {
+    private signInToken = (userId: string, username: string, role: string | string[]): any => {
         const token = JWT.sign({
             iss: "recetar.andes",
             sub: userId,
