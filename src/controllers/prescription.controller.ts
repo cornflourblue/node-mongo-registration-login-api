@@ -82,10 +82,8 @@ class PrescriptionController implements BaseController{
       end.setHours(23,59,59,999);
 
       const prescription: IPrescription[] | null = await Prescription.find({
-        "date": {
-          "$gte": start, "$lt": end
-        }},{patient: patient._id}
-      ).populate("supplies.supply", { name: 1, quantity: 1 })
+        "date": { "$gte": start, "$lt": end }, "patient" : patient
+      }).populate("supplies.supply", { name: 1, quantity: 1 })
         .populate('patient');
       return res.status(200).json(prescription);
     }catch(err){
