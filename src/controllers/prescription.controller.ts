@@ -82,13 +82,35 @@ class PrescriptionController implements BaseController{
       end.setHours(23,59,59,999);
 
       const prescription: IPrescription[] | null = await Prescription.find({
-        "date": {
-          "$gte": start, "$lt": end
-        }},{patient: patient._id}
-      ).populate("supplies.supply", { name: 1, quantity: 1 })
+        "date": { "$gte": start, "$lt": end }, "patient" : patient
+      }).populate("supplies.supply", { name: 1, quantity: 1 })
         .populate('patient');
       return res.status(200).json(prescription);
     }catch(err){
+      console.log(err);
+      return res.status(500).json('Server Error');
+    }
+  }
+
+  // Dispense prescription if it hasn't already been
+  public dispense = async (req: Request, res: Response) => {
+    try{
+      const id: string = req.params.id;
+      const { dispensedBy } = req.body;
+      const status = 'Dispensada';
+      const prescription = await Prescription.findOne({_id: id});
+      if(prescription?.status === 'Dispensada'){
+        console.log("Ya está dispensada!");
+        return res.status(422).json('La receta ya había sido dispensada.')
+      }else{
+        await Prescription.findByIdAndUpdate(id, {
+          status,
+          dispensedBy
+        });
+        const prescription = await Prescription.findOne({_id: id});
+        return res.status(200).json(prescription);
+      }
+    } catch(err){
       console.log(err);
       return res.status(500).json('Server Error');
     }
