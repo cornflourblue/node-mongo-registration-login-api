@@ -5,15 +5,13 @@ import { hasPermissionIn } from '../middlewares/roles.middleware';
 import { BaseController } from '../interfaces/classes/base-controllers.interface';
 
 // controllers
-import roleController from '../controllers/role.controller';
+// import roleController from '../controllers/role.controller';
 import prescriptionController from '../controllers/prescription.controller';
 import patientController from '../controllers/patient.controller';
 // import pharmacistController from '../controllers/pharmacist.controller';
 // import professionalController from '../controllers/professional.controller';
 // import pharmacyController from '../controllers/pharmacy.controller';
 import supplyController from '../controllers/supply.controller';
-
-import secretController from '../controllers/secret.controller';
 class PrivateRoutes{
 
   constructor(private router: Router = Router()){}
@@ -36,14 +34,12 @@ class PrivateRoutes{
     this.router.get('/prescriptions/get-by-patient-id/:patient_id', prescriptionController.getByPatientId);
     this.router.get('/supplies/get-by-name', supplyController.getByName);
 
-
-
     // roles
-    this.router.get(`/roles/`, hasPermissionIn('readAny','role'), roleController.index);
-    this.router.post(`/roles/`, hasPermissionIn('createAny','role'), roleController.create);
-    this.router.get(`/roles/:id`, hasPermissionIn('readAny','role'), roleController.show);
-    this.router.put(`/roles/:id`, hasPermissionIn('updateAny','role'), roleController.update);
-    this.router.delete(`/roles/:id`, hasPermissionIn('deleteAny','role'), roleController.delete);
+    // this.router.get(`/roles/`, hasPermissionIn('readAny','role'), roleController.index);
+    // this.router.post(`/roles/`, hasPermissionIn('createAny','role'), roleController.create);
+    // this.router.get(`/roles/:id`, hasPermissionIn('readAny','role'), roleController.show);
+    // this.router.put(`/roles/:id`, hasPermissionIn('updateAny','role'), roleController.update);
+    // this.router.delete(`/roles/:id`, hasPermissionIn('deleteAny','role'), roleController.delete);
 
     // prescriptions
     this.router.get(`/prescriptions/`, hasPermissionIn('readAny','prescription'), prescriptionController.index);
