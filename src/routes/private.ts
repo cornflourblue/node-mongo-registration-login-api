@@ -13,7 +13,6 @@ import patientController from '../controllers/patient.controller';
 // import pharmacyController from '../controllers/pharmacy.controller';
 import supplyController from '../controllers/supply.controller';
 
-import secretController from '../controllers/secret.controller';
 class PrivateRoutes{
 
   constructor(private router: Router = Router()){}
