@@ -47,6 +47,7 @@ class PrivateRoutes{
     this.router.get(`/prescriptions/:id`, hasPermissionIn('readAny','prescription'), prescriptionController.show);
     this.router.put(`/prescriptions/:id`, hasPermissionIn('updateAny','prescription'), prescriptionController.update);
     // this.router.delete(`/prescriptions/:id`, hasPermissionIn('deleteAny','prescription'), prescriptionController.delete);
+    this.router.get('/prescriptions/dispense/:id', hasPermissionIn('updateAny','prescription'), prescriptionController.dispense);
 
     // patients
     this.router.get(`/patients/`, hasPermissionIn('readAny','patient'), patientController.index);
