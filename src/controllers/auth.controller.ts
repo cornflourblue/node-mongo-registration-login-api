@@ -35,6 +35,23 @@ class AuthController{
         }
     }
 
+    public resetPassword = async (req: Request, res: Response): Promise<Response> => {
+        const { _id } = req.user as IUser;
+        const { oldPassword, newPassword } = req.body;
+        try{
+            const user: IUser | null = await User.findOne({ _id });
+            if(!user) return res.status(404).json('No se ha encontrado el usuario');
+            const isMatch: boolean = await User.schema.methods.isValidPassword(user, oldPassword);
+            if(!isMatch) return res.status(401).json({ message: 'Su contraseña actual no coincide con nuestros registros'});
+
+            await user.update({password: newPassword});
+            return res.status(200).json('Se ha modificado la contraseña correctamente!');
+        }catch(err){
+            console.log(err);
+            return res.status(500).json('Server Error');
+        }
+    }
+
     public login = async (req: Request, res: Response): Promise<Response> => {
         const { _id } = req.user as IUser;
             try{

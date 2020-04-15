@@ -12,6 +12,7 @@ import patientController from '../controllers/patient.controller';
 // import professionalController from '../controllers/professional.controller';
 // import pharmacyController from '../controllers/pharmacy.controller';
 import supplyController from '../controllers/supply.controller';
+import authController from '../controllers/auth.controller';
 class PrivateRoutes{
 
   constructor(private router: Router = Router()){}
@@ -27,7 +28,7 @@ class PrivateRoutes{
     // this.router.post('/test', passportMiddlewareJwt, pharmacistRoleMiddleware, testController.tmp);
 
     // this.router.post('/roles/:id/assign-user', roleController.assignUser);
-
+    this.router.post('/auth/reset-password', authController.resetPassword);
 
     this.router.get('/patients/get-by-dni/:dni', patientController.getByDni);
     this.router.get('/prescriptions/get-by-patient-and-date/:patientId&:date', prescriptionController.getByPatientAndDate);
