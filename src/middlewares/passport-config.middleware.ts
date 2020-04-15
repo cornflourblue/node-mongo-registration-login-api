@@ -16,7 +16,7 @@ const ExtractJwt = passportJwt.ExtractJwt;
 //  -user exists
 passport.use(new JwtStrategy({
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: config.JWT_SECRET
+    secretOrKey: (process.env.JWT_SECRET || config.JWT_SECRET)
 }, async (payload, done) => {
     try{
         const expirationDate = new Date(payload.exp * 1000);
