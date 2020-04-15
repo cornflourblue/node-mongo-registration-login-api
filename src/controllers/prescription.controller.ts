@@ -107,7 +107,9 @@ class PrescriptionController implements BaseController{
           status,
           dispensedBy
         });
-        const prescription = await Prescription.findOne({_id: id});
+        const prescription = await Prescription.findOne({_id: id})
+          .populate("supplies.supply", { name: 1, quantity: 1 })
+          .populate('patient');
         return res.status(200).json(prescription);
       }
     } catch(err){
