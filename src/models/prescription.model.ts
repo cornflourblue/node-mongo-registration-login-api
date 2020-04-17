@@ -3,7 +3,7 @@ import IPrescription from '../interfaces/prescription.interface';
 
 // Schema
 const prescriptionSchema = new Schema({
-  user_id: {
+  user: {
     type: Schema.Types.ObjectId,
     ref: "User",
     required: '{PATH} is required'
