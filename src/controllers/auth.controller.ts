@@ -140,7 +140,7 @@ class AuthController{
             rl: role,
             iat: new Date().getTime(),
             exp: new Date().setDate(new Date().getDate() + config.TOKEN_LIFETIME)
-        }, config.JWT_SECRET, {
+        }, (process.env.JWT_SECRET || config.JWT_SECRET), {
             algorithm: 'HS256'
         });
         return token;
