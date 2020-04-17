@@ -65,7 +65,7 @@ class PrescriptionController implements BaseController{
       const prescription: IPrescription[] | null = await Prescription.find({patient: patient_id})
         .populate("supplies.supply", { name: 1, quantity: 1 })
         .populate('patient')
-        .populate('user', 'enrollment email cuil');
+        .populate('user', 'enrollment email cuil businessName');
       return res.status(200).json(prescription);
     }catch(err){
       console.log(err);
@@ -86,7 +86,7 @@ class PrescriptionController implements BaseController{
         "date": { "$gte": start, "$lt": end }, "patient" : patient
       }).populate("supplies.supply", { name: 1, quantity: 1 })
         .populate('patient')
-        .populate('user', 'enrollment email cuil');
+        .populate('user', 'enrollment email cuil businessName');
       return res.status(200).json(prescription);
     }catch(err){
       console.log(err);
@@ -112,7 +112,7 @@ class PrescriptionController implements BaseController{
         const prescription = await Prescription.findOne({_id: id})
           .populate("supplies.supply", { name: 1, quantity: 1 })
           .populate('patient')
-          .populate('user', 'enrollment email cuil');
+          .populate('user', 'enrollment email cuil businessName');
         return res.status(200).json(prescription);
       }
     } catch(err){
