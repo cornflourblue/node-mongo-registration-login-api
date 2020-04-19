@@ -15,11 +15,11 @@ class PrescriptionController implements BaseController{
   }
 
   public create = async (req: Request, res: Response): Promise<Response> => {
-    const { user_id, patient, date, supplies, professionalFullname, observation} = req.body;
+    const { user, patient, date, supplies, professionalFullname, observation} = req.body;
 
     const myPatient: IPatient = await Patient.schema.methods.findOrCreate(patient);
     const newPrescription: IPrescription = new Prescription({
-      user_id,
+      user,
       patient: myPatient,
       date,
       professionalFullname,
@@ -66,7 +66,8 @@ class PrescriptionController implements BaseController{
       const patient_id: IPatient =  <IPatient> {_id: req.params.patient_id};
       const prescription: IPrescription[] | null = await Prescription.find({patient: patient_id})
         .populate("supplies.supply", { name: 1, quantity: 1 })
-        .populate('patient');
+        .populate('patient')
+        .populate('user', 'enrollment email cuil businessName');
       return res.status(200).json(prescription);
     }catch(err){
       console.log(err);
@@ -86,7 +87,8 @@ class PrescriptionController implements BaseController{
       const prescription: IPrescription[] | null = await Prescription.find({
         "date": { "$gte": start, "$lt": end }, "patient" : patient
       }).populate("supplies.supply", { name: 1, quantity: 1 })
-        .populate('patient');
+        .populate('patient')
+        .populate('user', 'enrollment email cuil businessName');
       return res.status(200).json(prescription);
     }catch(err){
       console.log(err);
@@ -111,7 +113,8 @@ class PrescriptionController implements BaseController{
         });
         const prescription = await Prescription.findOne({_id: id})
           .populate("supplies.supply", { name: 1, quantity: 1 })
-          .populate('patient');
+          .populate('patient')
+          .populate('user', 'enrollment email cuil businessName');
         return res.status(200).json(prescription);
       }
     } catch(err){
