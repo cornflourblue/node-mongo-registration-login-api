@@ -27,16 +27,18 @@ class PrescriptionController implements BaseController{
     });
     try{
       const errors: any[] = [];
+      let isValid: boolean = false;
       await Promise.all( supplies.map( async (sup: any) => {
         const sp: ISupply | null = await Supply.findOne({ _id: sup.supply._id});
 
         if(sp){
           newPrescription.supplies.push({supply: sp, quantity: sup.quantity});
+          isValid = true;
         }else{
           errors.push({supply: sup.supply, message: 'Este medicamento no fue encontrado, por favor seleccionar un medicamento válido.'});
         }
       }));
-      if(errors.length){
+      if(errors.length && !isValid){
         return res.status(422).json(errors);
       }
 
@@ -75,7 +77,7 @@ class PrescriptionController implements BaseController{
   public getByPatientAndDate = async (req: Request, res: Response): Promise<Response> => {
     try{
       const patient: IPatient =  <IPatient> {_id: req.params.patientId};
-      
+
       var start = new Date(req.params.date);
       start.setHours(0,0,0,0);
       var end = new Date(req.params.date);
