@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
-import config from '../config/env.config';
+import { env } from '../config/config';
 
 export const initializeMongo = (): void => {
-    const MONGO_URI = `${(process.env.MONGODB_URI || config.MONGODB_CONNECTION)}`;
+    const MONGO_URI = `${(process.env.MONGODB_URI || env.MONGODB_CONNECTION)}`;
     mongoose.set('useFindAndModify', true);
     // mongoose.set('debug', true);
     mongoose.connect(MONGO_URI, {

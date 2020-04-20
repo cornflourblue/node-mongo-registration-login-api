@@ -7,7 +7,7 @@ import { errorHandler } from "./middlewares/error.middleware";
 import { notFoundHandler } from "./middlewares/notFound.middleware";
 import * as db from './database/dbconfig';
 // config
-import config from './config/env.config';
+import { env } from './config/config';
 
 import routes from './routes/routes';
 
@@ -40,7 +40,7 @@ class Server {
     }
 
     routes() {
-        this.app.use(`${(process.env.API_URI_PRFIX || config.API_URI_PREFIX)}`, routes);
+        this.app.use(`${(process.env.API_URI_PRFIX || env.API_URI_PREFIX)}`, routes);
     }
 
     start() {
