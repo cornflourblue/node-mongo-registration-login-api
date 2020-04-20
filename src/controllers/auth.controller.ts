@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import * as JWT from 'jsonwebtoken';
-import config from '../config/env.config';
+import { env, httpCodes } from '../config/config';
 import { v4 as uuidv4 } from 'uuid';
-
 
 import IUser from '../interfaces/user.interface';
 import User from '../models/user.model';
@@ -10,8 +9,6 @@ import IRole from '../interfaces/role.interface';
 import Role from '../models/role.model';
 
 class AuthController{
-
-  constructor(private refreshTokens: any = {}){}
 
   public register = async (req: Request, res: Response): Promise<Response> => {
     try{
@@ -64,49 +61,58 @@ class AuthController{
           roles.push(role.role);
         }));
         const token = this.signInToken(user._id, user.username, user.businessName, roles);
-        // const token = this.signInToken(user._id, user.username, user.role.role);
 
         const refreshToken = uuidv4();
-        this.refreshTokens[refreshToken] = user._id;
+        await User.updateOne({_id: user._id}, {refreshToken: refreshToken});
         return res.status(200).json({
           jwt: token,
           refreshToken: refreshToken
         });
       }
-      throw new Error('user not found');
+
+      return res.status(httpCodes.UNAUTHORIZED).json('Debe iniciar sesión');//in the case that not found user
     }catch(err){
       console.log(err);
       return res.status(500).json('Server Error');
     }
   }
 
-  public logout = (req: Request, res: Response) => {
-
-    const refreshToken = req.body.refreshToken;
-    if (refreshToken in this.refreshTokens) {
-      delete this.refreshTokens[refreshToken];
+  public logout = async (req: Request, res: Response): Promise<Response> => {
+    const { refreshToken } = req.body;
+    try{
+      await User.findOneAndUpdate({ refreshToken: refreshToken }, { refreshToken: '' });
+      return res.status(204).json('Logged out successfully!');
+    }catch(err){
+      console.log(err);
+      return res.status(500).json("Server error");
     }
-    res.sendStatus(204);
   }
 
   public refresh = async (req: Request, res: Response): Promise<Response> => {
     const refreshToken = req.body.refreshToken;
     try{
+      const user: IUser | null = await User.findOne({refreshToken: refreshToken }).populate({path: 'roles', select: 'role'});
 
-      if (refreshToken in this.refreshTokens) {
-        const user: IUser | null = await User.findOne({_id: this.refreshTokens[refreshToken] }).populate({path: 'roles', select: 'role'});
-        if(user){
-          const roles: string | string[] = [];
-          await Promise.all(user.roles.map( async (role) => {
-              roles.push(role.role);
-          }));
+      if(user){
+        // in next version, should embed roles information
+        const roles: string | string[] = [];
+        await Promise.all(user.roles.map( async (role) => {
+            roles.push(role.role);
+        }));
 
-          // const token = this.signInToken(user._id, user.username, user.role.role);
-          const token = this.signInToken(user._id, user.username, user.businessName, roles);
-          return res.json({jwt: token})
-        }
+        const token = this.signInToken(user._id, user.username, user.businessName, roles);
+
+        // generate a new refresh_token
+        const refreshToken = uuidv4();
+        await User.updateOne({_id: user._id}, {refreshToken: refreshToken});
+        return res.status(200).json({
+          jwt: token,
+          refreshToken: refreshToken
+        });
       }
-      throw new Error('user not found');
+
+      return res.status(httpCodes.UNAUTHORIZED).json('Debe iniciar sesión');//in the case that not found user
+
     }catch(err){
       console.log(err);
       return res.status(500).json('Server error');
@@ -140,8 +146,8 @@ class AuthController{
       bsname: businessName,
       rl: role,
       iat: new Date().getTime(),
-      exp: new Date().setDate(new Date().getDate() + config.TOKEN_LIFETIME)
-    }, (process.env.JWT_SECRET || config.JWT_SECRET), {
+      exp: new Date().setDate(new Date().getDate() + env.TOKEN_LIFETIME)
+    }, (process.env.JWT_SECRET || env.JWT_SECRET), {
       algorithm: 'HS256'
     });
     return token;
