@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 
 import { hasPermissionIn } from '../middlewares/roles.middleware';
 // interfaces
@@ -18,8 +18,10 @@ class PrivateRoutes{
   constructor(private router: Router = Router()){}
 
   public routes(): Router{
-    // only requires authentication
-    // this.router.get('/secret-path', hasPermissionIn('createAny','video'), secretController.index);
+    // test route: only requires authentication
+    // this.router.get('/test', (req: Request, res: Response): Response => {
+    //   return res.status(200).json('test OK!');
+    // });
 
     // this.router.post('/users/:id/assign-role', authController.assignRole);
 
