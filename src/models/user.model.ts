@@ -55,6 +55,9 @@ const userSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Role'
   }],
+  refreshToken: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now
