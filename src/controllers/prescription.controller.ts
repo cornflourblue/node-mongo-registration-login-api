@@ -16,7 +16,6 @@ class PrescriptionController implements BaseController{
 
   public create = async (req: Request, res: Response): Promise<Response> => {
     const { user, patient, date, supplies, professionalFullname, observation} = req.body;
-
     const myPatient: IPatient = await Patient.schema.methods.findOrCreate(patient);
     const newPrescription: IPrescription = new Prescription({
       user,
@@ -29,13 +28,14 @@ class PrescriptionController implements BaseController{
       const errors: any[] = [];
       let isValid: boolean = false;
       await Promise.all( supplies.map( async (sup: any) => {
-        const sp: ISupply | null = await Supply.findOne({ _id: sup.supply._id});
-
-        if(sp){
-          newPrescription.supplies.push({supply: sp, quantity: sup.quantity});
-          isValid = true;
-        }else{
-          errors.push({supply: sup.supply, message: 'Este medicamento no fue encontrado, por favor seleccionar un medicamento válido.'});
+        if(sup.supply !== null){
+          const sp: ISupply | null = await Supply.findOne({ _id: sup.supply._id });
+          if(sp){
+            newPrescription.supplies.push({supply: sp, quantity: sup.quantity});
+            isValid = true;
+          }else{
+            errors.push({supply: sup.supply, message: 'Este medicamento no fue encontrado, por favor seleccionar un medicamento válido.'});
+          }
         }
       }));
       if(errors.length && !isValid){
