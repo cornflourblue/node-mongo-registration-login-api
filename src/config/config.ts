@@ -9,4 +9,5 @@ export const httpCodes = {
     UNAUTHORIZED: 401,
     FORBIDDEN: 403,
     EXPIRED_TOKEN: 406,
+    EXPECTATION_FAILED: 417,
   };
