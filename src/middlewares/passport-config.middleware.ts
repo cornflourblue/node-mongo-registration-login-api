@@ -29,7 +29,7 @@ passport.use(new JwtStrategy({
 
         // if user doesn't exists, handle it
         if(!user){
-            return done(null, false, {code: httpCodes.UNAUTHORIZED, message: 'Debe iniciar sesión'});
+            return done(null, false, {code: httpCodes.EXPECTATION_FAILED, message: 'Debe iniciar sesión'});
         }
 
         // otherwise, return the user
@@ -85,7 +85,7 @@ const authenticationMiddleware = (req: Request, res: Response, next: NextFunctio
             req.user = user;
             next();
         }catch(error){
-            if(error.code == 'ERR_HTTP_INVALID_STATUS_CODE') return res.status(httpCodes.UNAUTHORIZED).json({message: 'Debe iniciar sesión'});
+            if(error.code == 'ERR_HTTP_INVALID_STATUS_CODE') return res.status(httpCodes.EXPECTATION_FAILED).json({message: 'Debe iniciar sesión'});
 
             return res.status(500).json('Server Error')
         }

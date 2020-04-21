@@ -70,7 +70,7 @@ class AuthController{
         });
       }
 
-      return res.status(httpCodes.UNAUTHORIZED).json('Debe iniciar sesión');//in the case that not found user
+      return res.status(httpCodes.EXPECTATION_FAILED).json('Debe iniciar sesión');//in the case that not found user
     }catch(err){
       console.log(err);
       return res.status(500).json('Server Error');
@@ -111,7 +111,7 @@ class AuthController{
         });
       }
 
-      return res.status(httpCodes.UNAUTHORIZED).json('Debe iniciar sesión');//in the case that not found user
+      return res.status(httpCodes.EXPECTATION_FAILED).json('Debe iniciar sesión');//in the case that not found user
 
     }catch(err){
       console.log(err);
