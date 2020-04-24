@@ -6,6 +6,7 @@ import ISupply  from '../interfaces/supply.interface';
 import Supply from '../models/supply.model';
 import IPatient from '../interfaces/patient.interface';
 import Patient from '../models/patient.model';
+import User from '../models/user.model';
 
 class PrescriptionController implements BaseController{
 
@@ -101,19 +102,19 @@ class PrescriptionController implements BaseController{
   // Dispense prescription if it hasn't already been
   public dispense = async (req: Request, res: Response) => {
     try{
-      const id: string = req.params.id;
-      const { dispensedBy } = req.body;
+      const prescriptionId: string = req.params.prescriptionId;
+      const userId: string = req.params.userId;
       const status = 'Dispensada';
-      const prescription = await Prescription.findOne({_id: id});
+      const dispensedBy = await User.findOne({_id: userId});
+      const prescription = await Prescription.findOne({_id: prescriptionId});
       if(prescription?.status === 'Dispensada'){
-        console.log("Ya está dispensada!");
         return res.status(422).json('La receta ya había sido dispensada.')
       }else{
-        await Prescription.findByIdAndUpdate(id, {
+        await Prescription.findByIdAndUpdate(prescriptionId, {
           status,
           dispensedBy
         });
-        const prescription = await Prescription.findOne({_id: id})
+        const prescription = await Prescription.findOne({_id: prescriptionId})
           .populate("supplies.supply", { name: 1, quantity: 1 })
           .populate('patient')
           .populate('user', 'enrollment email cuil businessName')
