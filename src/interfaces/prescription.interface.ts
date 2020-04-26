@@ -14,7 +14,7 @@ export default interface IPrescription extends Document {
   date: Date;
   professionalFullname: string;
   observation?: string;
-  dispensedBy: string;
+  dispensedBy: IUser;
   createdAt?: Date;
   updatedAt?: Date;
 }
