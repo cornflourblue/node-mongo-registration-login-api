@@ -1,5 +1,5 @@
 import { Router} from 'express';
-import { passportMiddlewareLocal } from '../middlewares/passport-config.middleware';
+import { passportMiddlewareLocal, checkAuth } from '../middlewares/passport-config.middleware';
 import authController from '../controllers/auth.controller';
 
 class AuthRoutes {
@@ -9,6 +9,7 @@ class AuthRoutes {
   routes(): Router{
 
     this.router.post('/login', passportMiddlewareLocal, authController.login);
+    this.router.get('/jwt-login', checkAuth, authController.login);
     this.router.post('/register', authController.register);
     this.router.post('/logout', authController.logout);
     this.router.post('/refresh', authController.refresh);
