@@ -1,17 +1,53 @@
 import { Schema, Model, model } from 'mongoose';
 import IPrescription from '../interfaces/prescription.interface';
+import { supplySchema } from '../models/supply.model';
+import { patientSchema } from '../models/patient.model';
 
 // Schema
 const prescriptionSchema = new Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
+  patient_embbeded: patientSchema,
+  professional: {
+    userId: Schema.Types.ObjectId,
+    businessName: { type: String, required: true },
+    cuil: { type: String },
+    enrollment: { type: String},
+  },
+  dispensedBy_embedded: {
+    userId: Schema.Types.ObjectId,
+    businessName: { type: String },
+    cuil: { type: String },
+  },
+  dispensedAt: { type: Date },
+  supplies_embedded: [{
+    _id: false,
+    supply: supplySchema,
+    quantity: Number
+  }],
+  status: {
+    type: String,
+    enum: ['Pendiente', 'Dispensada'],
+    default: 'Pendiente'
+  },
+  date: {
+    type: Date,
+    default: Date.now,
     required: '{PATH} is required'
   },
-  patient: {
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: Date,
+  observation: {
+    type: String,
+  },
+  // production fields (deprecated)
+  professionalFullname: {
+    type: String,
+  },
+  dispensedBy: {
     type: Schema.Types.ObjectId,
-    ref: "Patient",
-    required: '{PATH} is required'
+    ref: "User"
   },
   supplies: [
     {
@@ -25,31 +61,17 @@ const prescriptionSchema = new Schema({
       }
     }
   ],
-  status: {
-    type: String,
-    enum: ['Pendiente', 'Dispensada'],
-    default: 'Pendiente'
-  },
-  professionalFullname: {
-    type: String,
-  },
-  dispensedBy: {
+  user: {
     type: Schema.Types.ObjectId,
-    ref: "User"
-  },
-  observation: {
-    type: String,
-  },
-  date: {
-    type: Date,
-    default: Date.now,
+    ref: "User",
     required: '{PATH} is required'
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
+  patient: {
+    type: Schema.Types.ObjectId,
+    ref: "Patient",
+    required: '{PATH} is required'
   },
-  updatedAt: Date,
+
 });
 
 prescriptionSchema.index({user: 1, createdAt: 1}, {unique: true});
