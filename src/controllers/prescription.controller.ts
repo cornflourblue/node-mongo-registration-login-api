@@ -29,7 +29,7 @@ class PrescriptionController implements BaseController{
       const errors: any[] = [];
       let isValid: boolean = false;
       await Promise.all( supplies.map( async (sup: any) => {
-        if(sup.supply !== null && sup.supply.length > 0){
+        if(sup.supply !== null && sup.supply !== ''){
           const sp: ISupply | null = await Supply.findOne({ _id: sup.supply._id });
           if(sp){
             newPrescription.supplies.push({supply: sp, quantity: sup.quantity});
