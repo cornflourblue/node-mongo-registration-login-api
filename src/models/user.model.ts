@@ -27,7 +27,7 @@ const encryptPassword = (password: string) => {
 }
 
 // Schema
-const userSchema = new Schema({
+export const userSchema = new Schema({
   username: {
     type: String,
     required: '{PATH} is required',

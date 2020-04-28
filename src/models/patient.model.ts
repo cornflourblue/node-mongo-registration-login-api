@@ -2,7 +2,7 @@ import { Schema, Model, model } from 'mongoose';
 import IPatient from '../interfaces/patient.interface';
 
 // Schema
-const patientSchema = new Schema({
+export const patientSchema = new Schema({
   dni: {
     type: String,
     required: '{PATH} is required',
