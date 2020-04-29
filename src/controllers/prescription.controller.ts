@@ -119,9 +119,12 @@ class PrescriptionController implements BaseController{
   public dispense = async (req: Request, res: Response) => {
     try{
       const prescriptionId: string = req.params.prescriptionId;
+      console.log("Prescription ID:", prescriptionId);
       const userId: string = req.params.userId;
+      console.log("UserId: ", userId);
       const status = 'Dispensada';
       const dispensedBy = await User.findOne({_id: userId});
+      console.log("DispensedBy: ", dispensedBy );
       const prescription = await Prescription.findOne({_id: prescriptionId});
       if(prescription?.status === 'Dispensada'){
         return res.status(422).json('La receta ya había sido dispensada.')
