@@ -45,7 +45,7 @@ class PrescriptionController implements BaseController{
       }
 
       await newPrescription.save();
-      return res.status(200).json({ newPrescription });
+      return res.status(200).json( newPrescription );
     }catch(err){
       console.log(err);
       return res.status(500).json('Server Error');
