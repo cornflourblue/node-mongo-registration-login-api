@@ -73,7 +73,9 @@ class SupplyController implements BaseController{
   public getByName = async (req: Request, res: Response): Promise<Response> => {
     try{
       const { supplyName } = req.query;
-      const supplies: ISupply[] = await Supply.find({name: { $regex: new RegExp( supplyName, "ig")}  }).select('name').limit(10);
+      let target: string = decodeURIComponent(supplyName);
+      target = target.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      const supplies: ISupply[] = await Supply.find({name: { $regex: new RegExp( target, "ig")}  }).select('name').limit(10);
       return res.status(200).json(supplies);
     }catch(err){
       console.log(err);
