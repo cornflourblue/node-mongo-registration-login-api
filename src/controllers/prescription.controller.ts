@@ -7,6 +7,7 @@ import Supply from '../models/supply.model';
 import IPatient from '../interfaces/patient.interface';
 import Patient from '../models/patient.model';
 import User from '../models/user.model';
+import IUser from '../interfaces/user.interface';
 
 class PrescriptionController implements BaseController{
 
@@ -44,7 +45,7 @@ class PrescriptionController implements BaseController{
       }
 
       await newPrescription.save();
-      return res.status(200).json({ newPrescription });
+      return res.status(200).json( newPrescription );
     }catch(err){
       console.log(err);
       return res.status(500).json('Server Error');
@@ -71,6 +72,21 @@ class PrescriptionController implements BaseController{
         .populate('user', 'enrollment email cuil businessName')
         .populate('dispensedBy', 'businessName cuil');
       return res.status(200).json(prescription);
+    }catch(err){
+      console.log(err);
+      return res.status(500).json('Server Error');
+    }
+  }
+
+  public getByUserId = async (req: Request, res: Response): Promise<Response> => {
+    try{
+      const userId: IUser =  <IUser> {_id: req.params.userId};
+      const prescriptions: IPrescription[] | null = await Prescription.find({user: userId})
+        .populate("supplies.supply", { name: 1, quantity: 1 })
+        .populate('patient')
+        .populate('user', 'enrollment email cuil businessName')
+        .populate('dispensedBy', 'businessName cuil');
+      return res.status(200).json(prescriptions);
     }catch(err){
       console.log(err);
       return res.status(500).json('Server Error');

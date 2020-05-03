@@ -35,6 +35,7 @@ class PrivateRoutes{
     this.router.get('/patients/get-by-dni/:dni', patientController.getByDni);
     this.router.get('/prescriptions/get-by-patient-and-date/:patientId&:date', prescriptionController.getByPatientAndDate);
     this.router.get('/prescriptions/get-by-patient-id/:patient_id', prescriptionController.getByPatientId);
+    this.router.get('/prescriptions/get-by-user-id/:userId', prescriptionController.getByUserId);
     this.router.get('/supplies/get-by-name', supplyController.getByName);
 
     // roles
