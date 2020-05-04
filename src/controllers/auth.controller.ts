@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import * as JWT from 'jsonwebtoken';
 import { env, httpCodes } from '../config/config';
 import { v4 as uuidv4 } from 'uuid';
+import _ from 'lodash';
 
 import IUser from '../interfaces/user.interface';
 import User from '../models/user.model';
@@ -118,6 +119,53 @@ class AuthController{
       return res.status(500).json('Server error');
     }
 
+  }
+
+  public updateUser = async (req: Request, res: Response): Promise<Response> => {
+    // "email", "password", "username", "enrollment", "cuil", "businessName",
+    // son los campos que permitiremos actualizar.
+    const { id } = req.params;
+    const values: any = {};
+    try{
+
+      _(req.body).forEach((value: string, key: string) => {
+        if (!_.isEmpty(value) && _.includes(["email", "password", "username", "enrollment", "cuil", "businessName"], key)){
+          values[key] = value;
+        }
+      });
+      const opts: any = { runValidators: true, new: true, context: 'query' };
+      const user: IUser | null = await User.findOneAndUpdate({_id: id}, values, opts).select("username email cuil enrollment businessName");
+
+      return res.status(200).json(user);
+    }catch(e){
+      // formateamos los errores de validacion
+      if(e.name !== 'undefined' && e.name === 'ValidationError'){
+        let errors: { [key: string]: string } = {};
+        Object.keys(e.errors).forEach(prop => {
+          errors[ prop ] = e.errors[prop].message;
+        });
+        return res.status(422).json(errors);
+      }
+      console.log(e);
+      return res.status(500).json("Server Error");
+    }
+  }
+
+  public getUser = async (req: Request, res: Response): Promise<Response> => {
+    // obtenemos los datos del usuario, buscando por: "email" / "username" / "cuil"
+    const { email, username, cuil } = req.body;
+    try{
+      const user: IUser | null = await User.findOne({
+        $or: [{"email": email}, {"username": username}, {"cuil": cuil}]
+      }).select("username email cuil enrollment, businessName");
+
+      if(!user) return res.status(400).json('Usuario no encontrado');
+
+      return res.status(200).json(user);
+    }catch(err){
+      console.log(err);
+      return res.status(500).json("Server Error");
+    }
   }
 
   public assignRole = async (req: Request, res: Response): Promise<Response> => {
