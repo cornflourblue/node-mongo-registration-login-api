@@ -32,6 +32,7 @@ class PrivateRoutes{
     // this.router.post('/roles/:id/assign-user', roleController.assignUser);
 
     this.router.get('/auth/user/find', hasPermissionIn('readAny','user'), authController.getUser);
+    this.router.post('/auth/register', hasPermissionIn('updateAny','user'), authController.register);
     this.router.post('/auth/reset-password', authController.resetPassword);
     this.router.patch('/auth/user/:id', hasPermissionIn('updateAny','user'), authController.updateUser);
 

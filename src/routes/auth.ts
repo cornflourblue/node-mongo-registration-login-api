@@ -10,7 +10,7 @@ class AuthRoutes {
 
     this.router.post('/login', passportMiddlewareLocal, authController.login);
     this.router.get('/jwt-login', checkAuth, authController.login);
-    this.router.post('/register', authController.register);
+    // this.router.post('/register', authController.register);
     this.router.post('/logout', authController.logout);
     this.router.post('/refresh', authController.refresh);
 
