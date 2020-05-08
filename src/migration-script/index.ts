@@ -1,12 +1,8 @@
 import mongoose from 'mongoose';
 import { env } from '../config/config';
-
-
 // interface
 import { PrescriptionClass }  from './classes/prescriptions.class';
 import IPrescriptionOld from './interfaces/prescription-deprecated.interface'; //old prescriptions
-
-
 
 // init db connections
 const initializeMongo = (): void => {
@@ -32,7 +28,6 @@ async function prescriptionMigration(){
     const prescriptionClass = new PrescriptionClass();
 
     try{
-
       const prescriptionsDeprecated: IPrescriptionOld[] = await prescriptionClass.getPrescriptions();
 
       console.log(`>> CANTIDAD DE PRESCRIPCIONES QUE DEBEN SER ACTUALIZADAS: ${prescriptionsDeprecated.length}`);
@@ -40,14 +35,10 @@ async function prescriptionMigration(){
 
         if(prescriptionsDeprecated){
             await prescriptionClass.updateEmbeddedFields(prescriptionsDeprecated);
-
-
         }else{
             console.log(">> NO SE ENCONTRARON PRESCRIPCIONES PARA ACTUALIZAR")
         }
-
         console.log('>> FIN PROCESO =====================');
-
     }catch(err){
         console.log("UN ERROR OCURRIO ");
         console.log(err);
