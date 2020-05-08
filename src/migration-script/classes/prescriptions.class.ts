@@ -1,106 +1,67 @@
 // treamos el modelo y la interface deprecated, para obtener los datos necesarios de la tabla "prescriptions-deprecated"
-import PrescriptionDeprecated from './models/prescription-deprecated.model';
-import IPrescriptionOld from './interfaces/prescription-deprecated.interface';
+import PrescriptionDeprecated from '../models/prescription-deprecated.model';
+import IPrescriptionOld from '../interfaces/prescription-deprecated.interface';
 
-import Prescription from '../models/prescription.model';
-import IPrescription from '../interfaces/prescription.interface';
+import Prescription from '../../models/prescription.model';
 
-import User from '../models/user.model';
-import Patient from '../models/patient.model';
-import Supply from '../models/supply.model';
+import User from '../../models/user.model';
+import Patient from '../../models/patient.model';
+import Supply from '../../models/supply.model';
 
-import IUser from '../interfaces/user.interface';
-import IPatient from '../interfaces/patient.interface';
-import ISupply from '../interfaces/supply.interface';
+import IUser from '../../interfaces/user.interface';
+import IPatient from '../../interfaces/patient.interface';
+import ISupply from '../../interfaces/supply.interface';
 
 
 export class PrescriptionClass {
 
-  private searchByDate: Date = new Date();
-
-
   //buscamos las prescriptciones que actualizaremos. Todas antes de la fecha actual
   public getPrescriptions = async (): Promise<IPrescriptionOld[]> => {
     try{
-      return await PrescriptionDeprecated.find({
-        'createdAt': { $lt: this.searchByDate }
-      });
+      return await PrescriptionDeprecated.find();
     }catch(err){
       throw new Error("OCURRIO UN ERROR AL OBTENER LAS PRESCRIPCIONES: " + err);
     }
   }
 
-  public changeToDeprecatedField = async (prescriptions: IPrescriptionOld[]): Promise<void> => {
-    try{
-        await Promise.all(prescriptions.map(async (prescription: IPrescriptionOld) => {
-            await PrescriptionDeprecated.updateMany({'_id': prescription._id}, {
-                $rename: {
-                    'user': 'user_deprecated',
-                    'patient': 'patient_deprecated',
-                    'supplies': 'supplies_deprecated',
-                    'dispensedBy': 'dispensedBy_deprecated',
-                    'professionalFullname': 'professionalFullname_deprecated'
-                }
-            });
-        }));
-    }catch(err){
-        throw new Error("OCURRIO UN ERROR AL ACTUALIZAR LOS NOMBRES DE LOS CAMPOS OBSOLETOS: " + err);
-    }
-  }
-
-  public getUpdatedPrescriptionsAttriubte = async (prescriptions: string[]): Promise<any> => {
-    try{
-      const p: IPrescription[] = <IPrescription[]> await Prescription.find({
-        _id: { $in: prescriptions}
-      });
-      return p;
-    }catch(err){
-      throw new Error("OCURRIO UN ERROR AL OBTENER LAS PRESCRIPCIONES: " + err);
-    }
-  }
-
-  // actualizamos los atributos
-  public updateEmbeddedFields = async (prescriptions: any[]): Promise<void> => {
+  public updateEmbeddedFields = async (prescriptions: IPrescriptionOld[]): Promise<void> => {
     // actualizamos la estructura de los datos de la prescripcion
-    await Promise.all(prescriptions.map( async (prescription: IPrescription) => {
+    await Promise.all(prescriptions.map( async (prescription: IPrescriptionOld) => {
         try{
             // buscamos al profesional, para embeber sus datos. No debe haber recetas sin profesional
-            console.log(prescription, 'ques ?');
-            const professional: IUser = await this.getProfessionalData(prescription.user_deprecated);
-            if(!professional) throw new Error(`>> EL PROFESIONAL NO FUE ENCONTRADO: ${prescription.user_deprecated}`);
+            const professional: IUser = await this.getProfessionalData(prescription.user);
+            if(!professional) throw new Error(`>> EL PROFESIONAL NO FUE ENCONTRADO: ${prescription.user}`);
+
             // buscamos al paciente, para embeber sus datos. No debe haber recetas sin paciente
-            let patient: IPatient = await this.getPatientData(prescription.patient_deprecated);
-            if(!patient) throw new Error(`>> EL PASIENTE NO FUE ENCONTRADO: ${prescription.patient_deprecated}`);
+            let patient: IPatient = await this.getPatientData(prescription.patient);
+            if(!patient) throw new Error(`>> EL PASIENTE NO FUE ENCONTRADO: ${prescription.patient}`);
 
             // actualizamos al profesional y al paciente
-            await Prescription.updateOne({"_id": prescription._id}, {
-                $set: {
+            const newPrescription = new Prescription({
                     "professional": {
                         "userId": professional._id,
                         "businessName": professional.businessName,
                         "enrollment": professional.enrollment,
                         "cuil": professional.cuil,
                     },
-                    "patient": {
-                        "_id": patient._id,
-                        "dni": patient.dni,
-                        "lastName": patient.lastName,
-                        "firstName": patient.firstName
-                    }
-                }
-            });
+                    "patient": patient,
+                    "status": prescription.status,
+                    "observation": prescription.observation,
+                    "date": prescription.date,
+                    "createdAt": prescription.createdAt,
+              });
+              await newPrescription.save(); // transfer data to the new schema
 
             // buscamos los datos de las farmacias, para embeber sus datos (solo si estas fueron dispensadas)
             if(prescription.status.toLowerCase() === 'dispensada'){
-                let pharmacist: IUser = await this.getPharmacistData(prescription.dispensedBy_deprecated);
-                await this.updatePharmacist(prescription._id, pharmacist);
+                let pharmacist: IUser = await this.getPharmacistData(prescription.dispensedBy);
+                await this.updatePharmacist(newPrescription._id, pharmacist);
             }
 
             // actualizamos los datos de los medicamentos a embebidos
-            await this.updatePrescriptionSupplies(prescription._id, prescription.supplies_deprecated);
+            await this.updatePrescriptionSupplies(newPrescription._id, prescription.supplies);
 
-            const updatedPrescription: IPrescription | null = await Prescription.findOne({"_id": prescription._id});
-            console.log(updatedPrescription?._id, "<================PRESCRIPCION ACTUALIZADA CORRECTAMENTE");
+            console.log(newPrescription._id, "<================PRESCRIPCION ACTUALIZADA CORRECTAMENTE");
         }catch(err){
             throw new Error(`>> OCURRIO UN ERROR AL TRATAR DE ACTUALIZAR LA PRESCRIPCION: ${prescription._id} ` + err);
         }
@@ -128,6 +89,7 @@ export class PrescriptionClass {
   private updatePrescriptionSupplies = async (prescriptionId: string, suppliesDeprecated: any ): Promise<void> => {
     try{
         const supplies: any = [];
+        // metemos todos los insumos en un array, con la cantidad de cada uno
         await Promise.all(suppliesDeprecated.map( async (sup:any) => {
           const supply: ISupply | null = await Supply.findOne({'_id': sup.supply});
           if(supply){
@@ -138,6 +100,7 @@ export class PrescriptionClass {
           }
         }));
 
+        // grabamos el array de insumos
         await Prescription.updateOne({"_id": prescriptionId}, {
             $set:{
                 "supplies": supplies
@@ -151,7 +114,6 @@ export class PrescriptionClass {
 
   // Buscamos los datos del profesional
   private getProfessionalData = async (professionalId: any): Promise<IUser> => {
-    console.log(professionalId,' <==================== DBEUG')
     try{
       const user: IUser | null = await User.findOne({"_id": professionalId});
       if(!user) throw new Error;
