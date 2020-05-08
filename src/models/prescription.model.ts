@@ -40,38 +40,8 @@ const prescriptionSchema = new Schema({
   updatedAt: Date,
   observation: {
     type: String,
-  },
-  // production fields (deprecated)
-  professionalFullname_deprecated: {
-    type: String,
-  },
-  dispensedBy_deprecated: {
-    type: Schema.Types.ObjectId,
-    ref: "User"
-  },
-  supplies_deprecated: [
-    {
-      supply:{
-        type: Schema.Types.ObjectId,
-        ref: "Supply"
-      },
-      quantity:{
-        type: Number,
-      }
-    }
-  ],
-  user_deprecated: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-  },
-  patient_deprecated: {
-    type: Schema.Types.ObjectId,
-    ref: "Patient",
-  },
-
+  }
 });
-
-prescriptionSchema.index({user: 1, createdAt: 1}, {unique: true});
 
 // Model
 const Prescription: Model<IPrescription> = model<IPrescription>('Prescription', prescriptionSchema);
