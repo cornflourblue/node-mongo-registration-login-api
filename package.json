@@ -13,7 +13,8 @@
         "start": "node dist/src/server.js",
         "start:dev": "ts-node ./src/server.ts",
         "dev": "nodemon",
-        "script": "concurrently \"node dist/src/migration-script/rename-prescriptions-collection.js\" \"node dist/src/migration-script/index.js\"",
+        "script:rename-prescriptions": "node dist/src/migration-script/rename-prescriptions-collection.js",
+        "script:migrate-update-prescriptions": "node dist/src/migration-script/index.js",
         "script:dev": "concurrently \"ts-node ./src/migration-script/rename-prescriptions-collection.ts\" \"ts-node ./src/migration-script/index.ts\"",
         "script:dev-migration": "ts-node ./src/migration-script/index.ts"
     },
