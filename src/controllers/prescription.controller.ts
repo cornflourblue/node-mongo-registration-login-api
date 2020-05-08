@@ -42,7 +42,7 @@ class PrescriptionController implements BaseController{
       }));
       if(errors.length && !isValid){
         return res.status(422).json(errors);
-      }
+      }  
 
       await newPrescription.save();
       return res.status(200).json( newPrescription );
