@@ -14,8 +14,10 @@ const validEmail = (email: string): boolean => {
   return emailRegex.test(email);
 };
 
-const uniqueUsername = async (username: string): Promise<boolean> => {
-  const user = await User.findOne({ username });
+const uniqueUsername = async function(username: string): Promise<boolean> {
+  // excluimos el id del usuario que vamos a actualizar para no validar que se esta repitiendo el campo username
+  const _id = typeof(this._id) !== 'undefined' ? this._id : this.getFilter()._id;
+  const user = await User.findOne({ username, _id: { $nin: [_id] } });
   return !user;
 };
 
@@ -27,7 +29,7 @@ const encryptPassword = (password: string) => {
 }
 
 // Schema
-const userSchema = new Schema({
+export const userSchema = new Schema({
   username: {
     type: String,
     required: '{PATH} is required',

@@ -1,44 +1,32 @@
 import { Schema, Model, model } from 'mongoose';
 import IPrescription from '../interfaces/prescription.interface';
+import { supplySchema } from '../models/supply.model';
+import { patientSchema } from '../models/patient.model';
 
 // Schema
 const prescriptionSchema = new Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required: '{PATH} is required'
+  patient: patientSchema,
+  professional: {
+    userId: Schema.Types.ObjectId,
+    businessName: { type: String, required: true },
+    cuil: { type: String },
+    enrollment: { type: String},
   },
-  patient: {
-    type: Schema.Types.ObjectId,
-    ref: "Patient",
-    required: '{PATH} is required'
+  dispensedBy: {
+    userId: Schema.Types.ObjectId,
+    businessName: { type: String },
+    cuil: { type: String },
   },
-  supplies: [
-    {
-      supply:{
-        type: Schema.Types.ObjectId,
-        ref: "Supply"
-      },
-      quantity:{
-        type: Number,
-        required: '{PATH} is required'
-      }
-    }
-  ],
+  dispensedAt: { type: Date },
+  supplies: [{
+    _id: false,
+    supply: supplySchema,
+    quantity: Number
+  }],
   status: {
     type: String,
     enum: ['Pendiente', 'Dispensada'],
     default: 'Pendiente'
-  },
-  professionalFullname: {
-    type: String,
-  },
-  dispensedBy: {
-    type: Schema.Types.ObjectId,
-    ref: "User"
-  },
-  observation: {
-    type: String,
   },
   date: {
     type: Date,
@@ -50,9 +38,10 @@ const prescriptionSchema = new Schema({
     default: Date.now
   },
   updatedAt: Date,
+  observation: {
+    type: String,
+  }
 });
-
-prescriptionSchema.index({user: 1, createdAt: 1}, {unique: true});
 
 // Model
 const Prescription: Model<IPrescription> = model<IPrescription>('Prescription', prescriptionSchema);

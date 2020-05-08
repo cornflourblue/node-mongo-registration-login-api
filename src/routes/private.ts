@@ -30,7 +30,11 @@ class PrivateRoutes{
     // this.router.post('/test', passportMiddlewareJwt, pharmacistRoleMiddleware, testController.tmp);
 
     // this.router.post('/roles/:id/assign-user', roleController.assignUser);
+
+    this.router.get('/auth/user/find', hasPermissionIn('readAny','user'), authController.getUser);
+    this.router.post('/auth/register', hasPermissionIn('updateAny','user'), authController.register);
     this.router.post('/auth/reset-password', authController.resetPassword);
+    this.router.patch('/auth/user/:id', hasPermissionIn('updateAny','user'), authController.updateUser);
 
     this.router.get('/patients/get-by-dni/:dni', patientController.getByDni);
     this.router.get('/prescriptions/get-by-patient-and-date/:patientId&:date', prescriptionController.getByPatientAndDate);
@@ -44,6 +48,7 @@ class PrivateRoutes{
     // this.router.get(`/roles/:id`, hasPermissionIn('readAny','role'), roleController.show);
     // this.router.put(`/roles/:id`, hasPermissionIn('updateAny','role'), roleController.update);
     // this.router.delete(`/roles/:id`, hasPermissionIn('deleteAny','role'), roleController.delete);
+
 
     // prescriptions
     this.router.get(`/prescriptions/`, hasPermissionIn('readAny','prescription'), prescriptionController.index);
