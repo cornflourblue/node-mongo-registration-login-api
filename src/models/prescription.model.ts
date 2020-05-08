@@ -5,20 +5,20 @@ import { patientSchema } from '../models/patient.model';
 
 // Schema
 const prescriptionSchema = new Schema({
-  patient_embbeded: patientSchema,
+  patient: patientSchema,
   professional: {
     userId: Schema.Types.ObjectId,
     businessName: { type: String, required: true },
     cuil: { type: String },
     enrollment: { type: String},
   },
-  dispensedBy_embedded: {
+  dispensedBy: {
     userId: Schema.Types.ObjectId,
     businessName: { type: String },
     cuil: { type: String },
   },
   dispensedAt: { type: Date },
-  supplies_embedded: [{
+  supplies: [{
     _id: false,
     supply: supplySchema,
     quantity: Number
@@ -42,14 +42,14 @@ const prescriptionSchema = new Schema({
     type: String,
   },
   // production fields (deprecated)
-  professionalFullname: {
+  professionalFullname_deprecated: {
     type: String,
   },
-  dispensedBy: {
+  dispensedBy_deprecated: {
     type: Schema.Types.ObjectId,
     ref: "User"
   },
-  supplies: [
+  supplies_deprecated: [
     {
       supply:{
         type: Schema.Types.ObjectId,
@@ -57,19 +57,16 @@ const prescriptionSchema = new Schema({
       },
       quantity:{
         type: Number,
-        required: '{PATH} is required'
       }
     }
   ],
-  user: {
+  user_deprecated: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    required: '{PATH} is required'
   },
-  patient: {
+  patient_deprecated: {
     type: Schema.Types.ObjectId,
     ref: "Patient",
-    required: '{PATH} is required'
   },
 
 });

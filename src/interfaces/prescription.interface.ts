@@ -4,20 +4,20 @@ import IPatient from './patient.interface';
 import IUser from './user.interface';
 
 export default interface IPrescription extends Document {
-  patient_embbeded: IPatient;
+  patient: IPatient;
   professional: {
     userId: string,
     enrollment: string,
     cuil: string,
     businessName: string,
   };
-  dispensedBy_embedded?: {
+  dispensedBy?: {
     userId: string,
     cuil: string,
     businessName: string,
   };
   dispensedAt: Date;
-  supplies_embedded: Array<{supply: ISupply, quantity: number}>;
+  supplies: Array<{supply: ISupply, quantity: number}>;
   status: string;
   date: Date;
 
@@ -26,12 +26,12 @@ export default interface IPrescription extends Document {
   updatedAt?: Date;
 
   // production field (deprecated)
-  dispensedBy: IUser;
-  supplies: [{
+  dispensedBy_deprecated: IUser;
+  supplies_deprecated: [{
     supply: ISupply,
     quantity: number
   }];
-  user: IUser;
-  patient: IPatient;
-  professionalFullname: string;
+  user_deprecated: IUser;
+  patient_deprecated: IPatient;
+  professionalFullname_deprecated: string;
 }
