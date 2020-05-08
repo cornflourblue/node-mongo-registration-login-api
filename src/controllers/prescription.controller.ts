@@ -17,13 +17,18 @@ class PrescriptionController implements BaseController{
   }
 
   public create = async (req: Request, res: Response): Promise<Response> => {
-    const { user, patient, date, supplies, professionalFullname, observation} = req.body;
+    const { professional, patient, date, supplies, observation} = req.body;
     const myPatient: IPatient = await Patient.schema.methods.findOrCreate(patient);
+    const myProfessional: IUser | null = await User.findOne({ _id: professional});
     const newPrescription: IPrescription = new Prescription({
-      user,
       patient: myPatient,
+      professional: {
+        userId: myProfessional?._id,
+        businessName: myProfessional?.businessName,
+        cuil: myProfessional?.cuil,
+        enrollment: myProfessional?.enrollment,
+      },
       date,
-      professionalFullname,
       observation
     });
     try{
@@ -81,11 +86,7 @@ class PrescriptionController implements BaseController{
   public getByUserId = async (req: Request, res: Response): Promise<Response> => {
     try{
       const userId: IUser =  <IUser> {_id: req.params.userId};
-      const prescriptions: IPrescription[] | null = await Prescription.find({user: userId})
-        .populate("supplies.supply", { name: 1, quantity: 1 })
-        .populate('patient')
-        .populate('user', 'enrollment email cuil businessName')
-        .populate('dispensedBy', 'businessName cuil');
+      const prescriptions: IPrescription[] | null = await Prescription.find({ "professional.userId":  userId});
       return res.status(200).json(prescriptions);
     }catch(err){
       console.log(err);

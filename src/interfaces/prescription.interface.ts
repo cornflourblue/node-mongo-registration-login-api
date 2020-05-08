@@ -1,7 +1,6 @@
 import { Document } from 'mongoose';
 import ISupply from './supply.interface';
 import IPatient from './patient.interface';
-import IUser from './user.interface';
 
 export default interface IPrescription extends Document {
   patient: IPatient;
