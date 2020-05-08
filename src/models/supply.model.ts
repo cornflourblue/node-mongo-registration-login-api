@@ -1,36 +1,39 @@
-import { Schema, Model, model, Mongoose } from 'mongoose';
+import { Schema, Model, model } from 'mongoose';
 import ISupply from '../interfaces/supply.interface';
 
 // Schema
-const supplySchema = new Schema({
-  id: {
-    type: String,
-    required: '{PATH} is required',
-    unique: true
-  },
+export const supplySchema = new Schema({
+
   name: {
     type: String,
     required: '{PATH} is required'
   },
+  activePrinciple: {
+    type: String
+  },
+  pharmaceutical_form:{
+    type: String
+  },
+  power: {
+    type: String
+  },
+  unity: {
+    type: String
+  },
+  firstPresentation: {
+    type: String
+  },
+  secondPresentation: {
+    type: String
+  },
   description: {
     type: String,
-    required: '{PATH} is required'
   },
   observation: {
     type: String,
-    required: '{PATH} is required'
   },
-  unity: {
-    type: String,
-    required: '{PATH} is required'
-  },
-  supplyArea:{
-    type: Schema.Types.ObjectId,
-    ref: 'SupplyArea',
-    required: true
-  },
-  createdAt: { 
-    type: Date, 
+  createdAt: {
+    type: Date,
     default: Date.now
   },
   updatedAt: Date,
