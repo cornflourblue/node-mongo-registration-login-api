@@ -17,74 +17,23 @@ class PrescriptionController implements BaseController{
   }
 
   public create = async (req: Request, res: Response): Promise<Response> => {
-    const { user, patient, supplies, observation} = req.body;
+    const { user, patient, date, supplies, professionalFullname, observation} = req.body;
     const myPatient: IPatient = await Patient.schema.methods.findOrCreate(patient);
-    const professional: IUser | null = await User.findOne({ _id: user });
-
     const newPrescription: IPrescription = new Prescription({
-      professional: {
-        userId: professional?._id,
-        businessName: professional?.businessName,
-        cuil: professional?.cuil,
-        enrollment: professional?.enrollment
-      },
+      user,
       patient: myPatient,
+      date,
+      professionalFullname,
       observation
     });
-
     try{
       const errors: any[] = [];
       let isValid: boolean = false;
-      // supplies ---deprectaed field
       await Promise.all( supplies.map( async (sup: any) => {
         if(sup.supply !== null && sup.supply !== ''){
           const sp: ISupply | null = await Supply.findOne({ _id: sup.supply._id });
           if(sp){
             newPrescription.supplies.push({supply: sp, quantity: sup.quantity});
-            isValid = true;
-          }else{
-            errors.push({supply: sup.supply, message: 'Este medicamento no fue encontrado, por favor seleccionar un medicamento válido.'});
-          }
-        }
-      }));
-      if(errors.length && !isValid){
-        return res.status(422).json(errors);
-      }
-
-      await newPrescription.save();
-      return res.status(200).json( newPrescription );
-    }catch(err){
-      try{
-        return this.createDeprecated(req, res);
-      }catch(error){
-        console.log(error);
-        return res.status(500).json('Server Error');
-      }
-    }
-  }
-
-  // this is deprecated field, back up save
-  private createDeprecated = async (req: Request, res: Response): Promise<Response> => {
-    const { user, patient, date, supplies, professionalFullname, observation} = req.body;
-    const myPatient: IPatient = await Patient.schema.methods.findOrCreate(patient);
-    const newPrescription: IPrescription = new Prescription({
-      user_deprecated: user,
-      professionalFullname_deprecated: professionalFullname,
-      patient_deprecateed: {
-        myPatient
-      },
-      date,
-      observation
-    });
-
-    try{
-      const errors: any[] = [];
-      let isValid: boolean = false;
-      await Promise.all( supplies.map( async (sup: any) => {
-        if(sup.supply !== null && sup.supply !== ''){
-          const sp: ISupply | null = await Supply.findOne({ _id: sup.supply._id });
-          if(sp){
-            newPrescription.supplies_deprecated.push({supply: sp, quantity: sup.quantity});
             isValid = true;
           }else{
             errors.push({supply: sup.supply, message: 'Este medicamento no fue encontrado, por favor seleccionar un medicamento válido.'});
@@ -182,13 +131,7 @@ class PrescriptionController implements BaseController{
       }else{
         await Prescription.findByIdAndUpdate(prescriptionId, {
           status,
-          dispensedBy,
-          dispensedBy_embedded: {
-            userId: dispensedBy?._id,
-            cuil: dispensedBy?.cuil,
-            businessName: dispensedBy?.businessName,
-          },
-          dispensedAt: Date.now
+          dispensedBy
         });
         const prescription = await Prescription.findOne({_id: prescriptionId})
           .populate("supplies.supply", { name: 1, quantity: 1 })
