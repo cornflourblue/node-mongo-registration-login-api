@@ -52,8 +52,6 @@ const prescriptionSchema = new Schema({
   updatedAt: Date,
 });
 
-prescriptionSchema.index({user: 1, createdAt: 1}, {unique: true});
-
 // Model
 const Prescription: Model<IPrescription> = model<IPrescription>('Prescription', prescriptionSchema);
 
