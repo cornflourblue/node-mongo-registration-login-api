@@ -24,14 +24,4 @@ export default interface IPrescription extends Document {
   observation?: string;
   createdAt?: Date;
   updatedAt?: Date;
-
-  // production field (deprecated)
-  dispensedBy_deprecated: IUser;
-  supplies_deprecated: [{
-    supply: ISupply,
-    quantity: number
-  }];
-  user_deprecated: IUser;
-  patient_deprecated: IPatient;
-  professionalFullname_deprecated: string;
 }
