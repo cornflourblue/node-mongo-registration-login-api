@@ -88,6 +88,7 @@ class PrivateRoutes{
 
     // supply
     this.router.get(`/supplies/`, hasPermissionIn('readAny','patient'), supplyController.index);
+    this.router.patch('/supplies/:id', hasPermissionIn('updateAny','supplies'), supplyController.update);
     // this.router.post(`/supplies/`, hasPermissionIn('createAny','patient'), supplyController.create);
     // this.router.get(`/supplies/:id`, hasPermissionIn('readAny','patient'), supplyController.show);
     // this.router.put(`/supplies/:id`, hasPermissionIn('updateAny','patient'), supplyController.update);
