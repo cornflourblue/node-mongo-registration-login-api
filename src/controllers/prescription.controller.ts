@@ -8,6 +8,7 @@ import IPatient from '../interfaces/patient.interface';
 import Patient from '../models/patient.model';
 import User from '../models/user.model';
 import IUser from '../interfaces/user.interface';
+import moment = require('moment');
 
 class PrescriptionController implements BaseController{
 
@@ -68,15 +69,28 @@ class PrescriptionController implements BaseController{
     }
   }
 
-  public getByPatientId = async (req: Request, res: Response): Promise<Response> => {
+  public getPrescriptionsByDateOrPatientId = async (req: Request, res: Response): Promise<Response<IPrescription[]>> => {
     try{
-      const patient_id: IPatient =  <IPatient> {_id: req.params.patient_id};
-      const prescription: IPrescription[] | null = await Prescription.find({patient: patient_id})
-        .populate("supplies.supply", { name: 1, quantity: 1 })
-        .populate('patient')
-        .populate('user', 'enrollment email cuil businessName')
-        .populate('dispensedBy', 'businessName cuil');
-      return res.status(200).json(prescription);
+      const filterPatient = req.params.patient_id;
+      const filterDate: string | null = req.params.date;
+
+      // define a default date for retrieve all the documents if the date its not provided
+      const defaultStart = '1900-01-01';
+      const defaultEnd = '3000-12-31';
+      let startDate: Date = moment(defaultStart, 'YYYY-MM-DD').startOf('day').toDate();
+      let endDate: Date = moment(defaultEnd, 'YYYY-MM-DD').endOf('day').toDate();
+
+      if(typeof(filterDate) !== 'undefined'){
+        startDate = moment(filterDate, 'YYYY-MM-DD').startOf('day').toDate();
+        endDate = moment(filterDate, 'YYYY-MM-DD').endOf('day').toDate();
+      }
+
+      const prescriptions: IPrescription[] | null = await Prescription.find({
+        "patient.dni": filterPatient,
+        "date": { "$gte": startDate, "$lt": endDate }
+      });
+
+      return res.status(200).json(prescriptions);
     }catch(err){
       console.log(err);
       return res.status(500).json('Server Error');
@@ -94,29 +108,8 @@ class PrescriptionController implements BaseController{
     }
   }
 
-  public getByPatientAndDate = async (req: Request, res: Response): Promise<Response> => {
-    try{
-      const patient: IPatient =  <IPatient> {_id: req.params.patientId};
-
-      var start = new Date(req.params.date);
-      start.setHours(0,0,0,0);
-      var end = new Date(req.params.date);
-      end.setHours(23,59,59,999);
-
-      const prescription: IPrescription[] | null = await Prescription.find({
-        "date": { "$gte": start, "$lt": end }, "patient" : patient
-      }).populate("supplies.supply", { name: 1, quantity: 1 })
-        .populate('patient')
-        .populate('user', 'enrollment email cuil businessName')
-        .populate('dispensedBy', 'businessName cuil');
-      return res.status(200).json(prescription);
-    }catch(err){
-      console.log(err);
-      return res.status(500).json('Server Error');
-    }
-  }
-
   // Dispense prescription if it hasn't already been
+
   public dispense = async (req: Request, res: Response) => {
     try{
       const prescriptionId: string = req.params.prescriptionId;
