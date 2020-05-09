@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Supply from '../models/supply.model';
 import ISupply from '../interfaces/supply.interface';
 import { BaseController } from '../interfaces/classes/base-controllers.interface';
+import _ from 'lodash';
 
 class SupplyController implements BaseController{
 
@@ -39,22 +40,33 @@ class SupplyController implements BaseController{
     }
   }
 
-  public update = async (req: Request, res: Response) => {
+  public update = async (req: Request, res: Response): Promise<Response> => {
+    // "name", "activePrinciple", "pharmaceutical_form", "power", "unity", "firstPresentation", "secondPresentation", "description", "observation"
+    // son los campos que permitiremos actualizar.
+    const { id } = req.params;
+    const values: any = {};
     try{
-      const _id: string = req.params.id;
-      const { id, name, unity, sex, image } = req.body;
-      await Supply.findByIdAndUpdate(_id, {
-        id,
-        name,
-        unity,
-        sex,
-        image
+
+      _(req.body).forEach((value: string, key: string) => {
+        values[key] = value;
+          if (!_.isEmpty(value) && _.includes(["name", "activePrinciple", "pharmaceutical_form", "power", "unity", "firstPresentation", "secondPresentation", "description", "observation" ], key)){
+        }
       });
-      const supply = await Supply.findOne({_id: id});
+      const opts: any = { runValidators: true, new: true };
+      const supply: ISupply | null = await Supply.findOneAndUpdate({_id: id}, values, opts);
+
       return res.status(200).json(supply);
-    } catch(err){
-      console.log(err);
-      return res.status(500).json('Server Error');
+    }catch(e){
+      // formateamos los errores de validacion
+      if(e.name !== 'undefined' && e.name === 'ValidationError'){
+        let errors: { [key: string]: string } = {};
+        Object.keys(e.errors).forEach(prop => {
+          errors[ prop ] = e.errors[prop].message;
+        });
+        return res.status(422).json(errors);
+      }
+      console.log(e);
+      return res.status(500).json("Server Error");
     }
   }
 
