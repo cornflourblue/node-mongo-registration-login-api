@@ -19,9 +19,7 @@ class PrescriptionController implements BaseController{
 
   public create = async (req: Request, res: Response): Promise<Response> => {
     const { professional, patient, date, supplies, observation} = req.body;
-    console.log(patient, '<=================== patient from REQ');
     const myPatient: IPatient = await Patient.schema.methods.findOrCreate(patient);
-    console.log(myPatient, '<=================== patient from MONGO');
     const myProfessional: IUser | null = await User.findOne({ _id: professional});
     const newPrescription: IPrescription = new Prescription({
       patient: myPatient,
@@ -34,7 +32,6 @@ class PrescriptionController implements BaseController{
       date,
       observation
     });
-    console.log(newPrescription, '<=================== check prescription');
     try{
       const errors: any[] = [];
       let isValid: boolean = false;
