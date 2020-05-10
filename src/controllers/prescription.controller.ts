@@ -112,25 +112,25 @@ class PrescriptionController implements BaseController{
 
   public dispense = async (req: Request, res: Response) => {
     try{
-      const prescriptionId: string = req.params.prescriptionId;
-      const userId: string = req.params.userId;
-      const status = 'Dispensada';
-      const dispensedBy = await User.findOne({_id: userId});
-      const prescription = await Prescription.findOne({_id: prescriptionId});
-      if(prescription?.status === 'Dispensada'){
-        return res.status(422).json('La receta ya había sido dispensada.')
-      }else{
-        await Prescription.findByIdAndUpdate(prescriptionId, {
-          status,
-          dispensedBy
-        });
-        const prescription = await Prescription.findOne({_id: prescriptionId})
-          .populate("supplies.supply", { name: 1, quantity: 1 })
-          .populate('patient')
-          .populate('user', 'enrollment email cuil businessName')
-          .populate('dispensedBy', 'businessName cuil');
-        return res.status(200).json(prescription);
-      }
+      const {prescriptionId, userId } = req.params;
+
+      const dispensedBy: IUser | null = await User.findOne({_id: userId});
+      if(!dispensedBy) return res.status(4000).json("Farmacia no encontrada");
+
+      const opts: any = {new: true};
+      const prescription: IPrescription | null = await Prescription.findOneAndUpdate({_id: prescriptionId, status: 'Pendiente'}, {
+        status: 'Dispensada',
+        dispensedBy: {
+          userId: dispensedBy?._id,
+          businessName: dispensedBy?.businessName,
+          cuil: dispensedBy?.cuil,
+        },
+        dispensedAt: new Date()
+      }, opts);
+
+      if(!prescription) return res.status(422).json('La receta ya había sido dispensada.');
+
+      return res.status(200).json(prescription);
     } catch(err){
       console.log(err);
       return res.status(500).json('Server Error');
