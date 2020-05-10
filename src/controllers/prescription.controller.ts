@@ -34,6 +34,7 @@ class PrescriptionController implements BaseController{
       date,
       observation
     });
+    console.log(newPrescription, '<=================== check prescription');
     try{
       const errors: any[] = [];
       let isValid: boolean = false;
