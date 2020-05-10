@@ -35,8 +35,10 @@ const Patient: Model<IPatient> = model<IPatient>('Patient', patientSchema);
 Patient.schema.method('findOrCreate', async function(patientParam: IPatient): Promise<IPatient>{
   try{
     let patient: IPatient | null = await Patient.findOne({ dni: patientParam.dni});
+    console.log(patient, '<========== from Patient model');
     if(!patient){
       patient = new Patient(patientParam);
+      console.log(patient, '<========== on create Patient model');
       await patient.save();
     }
     return patient;
