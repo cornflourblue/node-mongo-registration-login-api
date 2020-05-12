@@ -155,13 +155,13 @@ class AuthController{
     // obtenemos los datos del usuario, buscando por: "email" / "username" / "cuil"
     const { email, username, cuil } = req.body;
     try{
-      const user: IUser | null = await User.findOne({
+      const users: IUser[] | null = await User.find({
         $or: [{"email": email}, {"username": username}, {"cuil": cuil}]
       }).select("username email cuil enrollment, businessName");
 
-      if(!user) return res.status(400).json('Usuario no encontrado');
+      if(!users) return res.status(400).json('Usuario no encontrado');
 
-      return res.status(200).json(user);
+      return res.status(200).json(users);
     }catch(err){
       console.log(err);
       return res.status(500).json("Server Error");
