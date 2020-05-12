@@ -5,9 +5,7 @@ import IPatient from '../interfaces/patient.interface';
 export const patientSchema = new Schema({
   dni: {
     type: String,
-    required: '{PATH} is required',
-    index: true,
-    unique: true
+    required: '{PATH} is required'
   },
   lastName: {
     type: String,
