@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import Prescription from '../models/prescription.model';
-import IPrescription from '../interfaces/prescription.interface';
+import IPrescription, { PrescriptionSupply } from '../interfaces/prescription.interface';
 import { BaseController } from '../interfaces/classes/base-controllers.interface';
 import ISupply  from '../interfaces/supply.interface';
 import Supply from '../models/supply.model';
@@ -48,7 +48,7 @@ class PrescriptionController implements BaseController{
       }));
       if(errors.length && !isValid){
         return res.status(422).json(errors);
-      }  
+      }
 
       await newPrescription.save();
       return res.status(200).json( newPrescription );
@@ -137,22 +137,45 @@ class PrescriptionController implements BaseController{
     }
   }
 
-  public update = async (req: Request, res: Response) => {
+  public update = async (req: Request, res: Response): Promise<Response> => {
+    const { id } = req.params;
+    const { date, supplies, observation} = req.body;
+
     try{
-      const id: string = req.params.id;
-      const { user_id, patient, date, supplies, status, professionalFullname, dispensedBy } = req.body;
-      await Prescription.findByIdAndUpdate(id, {
-        user_id,
-        patient,
+
+      const prescription: IPrescription | null = await Prescription.findOne({_id: id});
+      if(!prescription) return res.status(400).json("No se encontró la prescripción");
+
+      const errors: any[] = [];
+      const suppliesLoaded: PrescriptionSupply[] = [];
+
+      await Promise.all( supplies.map( async (sup: any) => {
+        if(sup.supply !== null && sup.supply !== ''){
+          const sp: ISupply | null = await Supply.findOne({ _id: sup.supply._id });
+          if(sp){
+            suppliesLoaded.push({supply: sp, quantity: sup.quantity});
+          }else{
+            errors.push({supply: sup.supply, message: 'Este medicamento no fue encontrado, por favor seleccionar un medicamento válido.'});
+          }
+        }
+      }));
+
+      if(errors.length){
+        return res.status(422).json(errors);
+      }
+
+      if(!suppliesLoaded.length){
+        return res.status(422).json({message: 'Debe seleccionar al menos 1 medicamento'});
+      }
+
+      const opts: any = { runValidators: true, new: true, context: 'query' };
+      const updatedPrescription: IPrescription | null = await Prescription.findOneAndUpdate({_id: id}, {
         date,
-        supplies,
-        status,
-        professionalFullname,
-        dispensedBy
-      });
-      const prescription = await Prescription.findOne({_id: id});
-      return res.status(200).json(prescription);
-    } catch(err){
+        observation,
+        supplies: suppliesLoaded
+      }, opts);
+      return res.status(200).json( updatedPrescription );
+    }catch(err){
       console.log(err);
       return res.status(500).json('Server Error');
     }
