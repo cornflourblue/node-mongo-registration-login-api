@@ -143,8 +143,8 @@ class PrescriptionController implements BaseController{
 
     try{
 
-      const prescription: IPrescription | null = await Prescription.findOne({_id: id});
-      if(!prescription) return res.status(400).json("No se encontró la prescripción");
+      const prescription: IPrescription | null = await Prescription.findOne({_id: id, status: "Pendiente"});
+      if(!prescription) return res.status(400).json("No se encontró la prescripción o se encuentra dispensada");
 
       const errors: any[] = [];
       const suppliesLoaded: PrescriptionSupply[] = [];
