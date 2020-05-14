@@ -18,7 +18,7 @@ class PrescriptionController implements BaseController{
   }
 
   public create = async (req: Request, res: Response): Promise<Response> => {
-    const { professional, patient, date, supplies, observation} = req.body;
+    const { professional, patient, date, supplies, observation, diagnostic} = req.body;
     const myPatient: IPatient = await Patient.schema.methods.findOrCreate(patient);
     const myProfessional: IUser | null = await User.findOne({ _id: professional});
     const newPrescription: IPrescription = new Prescription({
@@ -30,7 +30,8 @@ class PrescriptionController implements BaseController{
         enrollment: myProfessional?.enrollment,
       },
       date,
-      observation
+      observation,
+      diagnostic,
     });
     try{
       const errors: any[] = [];
@@ -139,7 +140,7 @@ class PrescriptionController implements BaseController{
 
   public update = async (req: Request, res: Response): Promise<Response> => {
     const { id } = req.params;
-    const { date, supplies, observation} = req.body;
+    const { date, supplies, observation, diagnostic} = req.body;
 
     try{
 
@@ -172,6 +173,7 @@ class PrescriptionController implements BaseController{
       const updatedPrescription: IPrescription | null = await Prescription.findOneAndUpdate({_id: id}, {
         date,
         observation,
+        diagnostic,
         supplies: suppliesLoaded
       }, opts);
       return res.status(200).json( updatedPrescription );

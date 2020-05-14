@@ -38,6 +38,9 @@ const prescriptionSchema = new Schema({
     default: Date.now
   },
   updatedAt: Date,
+  diagnostic: {
+    type: String,
+  },
   observation: {
     type: String,
   }

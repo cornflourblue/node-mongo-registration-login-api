@@ -25,6 +25,7 @@ export default interface IPrescription extends Document {
   status: string;
   date: Date;
 
+  diagnostic?: string;
   observation?: string;
   createdAt?: Date;
   updatedAt?: Date;
