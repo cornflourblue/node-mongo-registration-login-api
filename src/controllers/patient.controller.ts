@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Patient from '../models/patient.model';
 import IPatient from '../interfaces/patient.interface';
 import { BaseController } from '../interfaces/classes/base-controllers.interface';
+import _ from 'lodash';
 
 class PatientController implements BaseController{
 
@@ -66,6 +67,37 @@ class PatientController implements BaseController{
     } catch(err){
       console.log(err);
       return res.status(500).json('Server Error');
+    }
+  }
+
+  public updatePatient = async (req: Request, res: Response): Promise<Response> => {
+    console.log("Entro update patient");
+    // "dni", "lastName", "firstName", "sex"
+    // son los campos que permitiremos actualizar.
+    const { id } = req.params;
+    const values: any = {};
+    try{
+
+      _(req.body).forEach((value: string, key: string) => {
+        if (!_.isEmpty(value) && _.includes(["dni", "lastName", "firstName", "sex"], key)){
+          values[key] = value;
+        }
+      });
+      const opts: any = { runValidators: true, new: true, context: 'query' };
+      const patient: IPatient | null = await Patient.findOneAndUpdate({_id: id}, values, opts).select("dni lastName firstName sex");
+
+      return res.status(200).json(patient);
+    }catch(e){
+      // formateamos los errores de validacion
+      if(e.name !== 'undefined' && e.name === 'ValidationError'){
+        let errors: { [key: string]: string } = {};
+        Object.keys(e.errors).forEach(prop => {
+          errors[ prop ] = e.errors[prop].message;
+        });
+        return res.status(422).json(errors);
+      }
+      console.log(e);
+      return res.status(500).json("Server Error");
     }
   }
 
