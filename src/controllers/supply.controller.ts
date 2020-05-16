@@ -87,7 +87,7 @@ class SupplyController implements BaseController{
       const { supplyName } = req.query;
       let target: string = decodeURIComponent(supplyName);
       target = target.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-      const supplies: ISupply[] = await Supply.find({name: { $regex: new RegExp( target, "ig")}  }).select('name').limit(10);
+      const supplies: ISupply[] = await Supply.find({name: { $regex: new RegExp( target, "ig")}  }).select('name').limit(20);
       return res.status(200).json(supplies);
     }catch(err){
       console.log(err);
