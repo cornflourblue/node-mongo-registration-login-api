@@ -2,6 +2,11 @@ import { Document } from 'mongoose';
 import ISupply from './supply.interface';
 import IPatient from './patient.interface';
 
+export interface PrescriptionSupply {
+  supply: ISupply;
+  quantity: number;
+}
+
 export default interface IPrescription extends Document {
   patient: IPatient;
   professional: {
@@ -16,10 +21,11 @@ export default interface IPrescription extends Document {
     businessName: string,
   };
   dispensedAt: Date;
-  supplies: Array<{supply: ISupply, quantity: number}>;
+  supplies: PrescriptionSupply[];
   status: string;
   date: Date;
 
+  diagnostic?: string;
   observation?: string;
   createdAt?: Date;
   updatedAt?: Date;
