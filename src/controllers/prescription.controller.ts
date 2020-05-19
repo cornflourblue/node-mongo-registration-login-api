@@ -78,6 +78,7 @@ class PrescriptionController implements BaseController{
       // define a default date for retrieve all the documents if the date its not provided
       const defaultStart = '1900-01-01';
       const defaultEnd = '3000-12-31';
+      let limitDate: Date = moment().subtract(30, 'day').startOf('day').toDate();
       let startDate: Date = moment(defaultStart, 'YYYY-MM-DD').startOf('day').toDate();
       let endDate: Date = moment(defaultEnd, 'YYYY-MM-DD').endOf('day').toDate();
 
@@ -85,6 +86,14 @@ class PrescriptionController implements BaseController{
         startDate = moment(filterDate, 'YYYY-MM-DD').startOf('day').toDate();
         endDate = moment(filterDate, 'YYYY-MM-DD').endOf('day').toDate();
       }
+
+      // before search: update expired prescriptions status
+      await Prescription.updateMany({
+        "patient.dni": filterPatient,
+        "date": { "$lt": limitDate }
+      }, {
+        "status": "Vencida"
+      });
 
       const prescriptions: IPrescription[] | null = await Prescription.find({
         "patient.dni": filterPatient,
