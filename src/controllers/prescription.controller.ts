@@ -78,7 +78,7 @@ class PrescriptionController implements BaseController{
       // define a default date for retrieve all the documents if the date its not provided
       const defaultStart = '1900-01-01';
       const defaultEnd = '3000-12-31';
-      let limitDate: Date = moment().subtract(30, 'day').startOf('day').toDate();
+      let limitDate: Date = moment().subtract(30, 'day').startOf('day').toDate(); // expired control date
       let startDate: Date = moment(defaultStart, 'YYYY-MM-DD').startOf('day').toDate();
       let endDate: Date = moment(defaultEnd, 'YYYY-MM-DD').endOf('day').toDate();
 
@@ -87,9 +87,10 @@ class PrescriptionController implements BaseController{
         endDate = moment(filterDate, 'YYYY-MM-DD').endOf('day').toDate();
       }
 
-      // before search: update expired prescriptions status
+      // before search: update expired prescriptions, with status "Pendiente"
       await Prescription.updateMany({
         "patient.dni": filterPatient,
+        "status": "Pendiente",
         "date": { "$lt": limitDate }
       }, {
         "status": "Vencida"
@@ -154,7 +155,7 @@ class PrescriptionController implements BaseController{
     try{
 
       const prescription: IPrescription | null = await Prescription.findOne({_id: id, status: "Pendiente"});
-      if(!prescription) return res.status(400).json("No se encontró la prescripción o se encuentra dispensada");
+      if(!prescription) return res.status(400).json("No se encontró la prescripción, se encuentra dispensada o vencida");
 
       const errors: any[] = [];
       const suppliesLoaded: PrescriptionSupply[] = [];
