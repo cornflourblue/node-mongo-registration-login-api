@@ -25,7 +25,7 @@ const prescriptionSchema = new Schema({
   }],
   status: {
     type: String,
-    enum: ['Pendiente', 'Dispensada'],
+    enum: ['Pendiente', 'Dispensada', 'Vencida'],
     default: 'Pendiente'
   },
   date: {
@@ -38,6 +38,9 @@ const prescriptionSchema = new Schema({
     default: Date.now
   },
   updatedAt: Date,
+  diagnostic: {
+    type: String,
+  },
   observation: {
     type: String,
   }

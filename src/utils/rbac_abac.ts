@@ -33,6 +33,8 @@ class AccessControlLoader {
       // prescriptions
       { role: 'professional', resource: 'prescription', action: 'create:any', attributes: '*, !views' },
       { role: 'professional', resource: 'prescription', action: 'read:own', attributes: '*' },
+      { role: 'professional', resource: 'prescription', action: 'read:any', attributes: '*' },
+      { role: 'professional', resource: 'prescription', action: 'update:own', attributes: '*' },
       { role: 'professional', resource: 'prescription', action: 'delete:any', attributes: '*' },
 
       { role: 'pharmacist', resource: 'prescription', action: 'read:any', attributes: '*' },
