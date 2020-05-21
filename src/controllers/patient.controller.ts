@@ -44,28 +44,23 @@ class PatientController implements BaseController{
   public getByDni = async (req: Request, res: Response): Promise<Response> => {
     try{
       const { dni } = req.params;
+      // Primero busca en base de RecetAR
       const patients = await Patient.find({dni: dni});
 
+      // Si no encuentra, busca en MPI
       if( patients.length === 0){
-        needle.get(env.ANDES_TEST_ENDPOINT + "?documento=" +dni, {headers: { 'Authorization': env.JWT_TEST_TOKEN}}, 
-          async function(error: any, res: any) {
-            if (!error && res.statusCode == 200){
-              const patients: IPatient[] = [];
-              res.body.forEach(function (item: any) {
-                patients.push({
-                  dni: <string>item.documento,
-                  firstName: <string>item.nombre,
-                  lastName: <string>item.apellido,
-                  sex: <string>item.sexo,
-                  status: <string>item.estado
-                });
-                console.log(item.documento);
-                console.log(item.nombre);
-              });
-              return res.status(200).json(patients);       
-            }
+        const resp =  await needle("get", env.ANDES_MPI_ENDPOINT + "?documento=" +dni, {headers: { 'Authorization': env.JWT_MPI_TOKEN}})     
+        resp.body.forEach(function (item: any) {
+          patients.push(<IPatient>{
+            dni: item.documento,
+            firstName: item.nombre,
+            lastName: item.apellido,
+            sex: item.sexo[0].toUpperCase() + item.sexo.substr(1).toLowerCase(),
+            status: item.estado[0].toUpperCase() + item.estado.substr(1).toLowerCase(),
           });
+        });
       }
+
       return res.status(200).json(patients);
     }catch(err){
       console.log(err);
