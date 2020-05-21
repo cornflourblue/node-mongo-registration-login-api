@@ -23,7 +23,6 @@ export const patientSchema = new Schema({
   status: {
     type: String,
     enum: ['Validado', 'Temporal'],
-    required: '{PATH} is required'
   },
   createdAt: {
     type: Date,

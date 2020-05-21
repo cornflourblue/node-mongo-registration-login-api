@@ -33,6 +33,7 @@
         "mongodb": "^3.2.7",
         "mongoose": "^5.6.9",
         "morgan": "^1.9.1",
+        "needle": "^2.4.1",
         "passport": "^0.4.1",
         "passport-jwt": "^4.0.0",
         "passport-local": "^1.0.0",
@@ -54,6 +55,7 @@
         "@types/passport-jwt": "^3.0.3",
         "@types/passport-local": "^1.0.33",
         "@types/uuid": "^7.0.2",
+        "@types/needle": "^2.0.4",
         "nodemon": "^2.0.2",
         "ts-node": "^8.6.2",
         "typescript": "^3.7.5"
