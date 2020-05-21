@@ -91,7 +91,7 @@ class PrescriptionController implements BaseController{
       const prescriptions: IPrescription[] | null = await Prescription.find({
         "patient.dni": filterPatient,
         "date": { "$gte": startDate, "$lt": endDate }
-      });
+      }).sort({ field: 'desc', date: -1});
 
       return res.status(200).json(prescriptions);
     }catch(err){
@@ -104,7 +104,7 @@ class PrescriptionController implements BaseController{
     try{
       const { userId } = req.params;
       await this.updateStatuses(userId, '');
-      const prescriptions: IPrescription[] | null = await Prescription.find({ "professional.userId":  userId});
+      const prescriptions: IPrescription[] | null = await Prescription.find({ "professional.userId":  userId}).sort({ field: 'desc', date: -1});
       return res.status(200).json(prescriptions);
     }catch(err){
       console.log(err);
