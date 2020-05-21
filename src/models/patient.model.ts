@@ -43,7 +43,7 @@ Patient.schema.method('findOrCreate', async function(patientParam: IPatient): Pr
 
     // Si no está local, buscar en MPI de Andes y guardar
     if(!patient){
-      const resp =  await needle("get", `${(process.env.ANDES_MPI_ENDPOINT || env.ANDES_MPI_ENDPOINT)}?documento=${patientParam.dni}`, {headers: { 'Authorization': (process.env.JWT_MPI_TOKEN || env.JWT_MPI_TOKEN)}})
+      const resp =  await needle("get", `${process.env.ANDES_MPI_ENDPOINT}?documento=${patientParam.dni}`, {headers: { 'Authorization': process.env.JWT_MPI_TOKEN}})
       resp.body.forEach(async function (item: any) {
         if(item.sexo === patientParam.sex.toLocaleLowerCase()){
           patient = <IPatient>{

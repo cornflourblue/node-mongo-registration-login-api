@@ -49,7 +49,7 @@ class PatientController implements BaseController{
 
       // Si no encuentra, busca en MPI
       if( patients.length === 0){
-        const resp =  await needle("get", `${(process.env.ANDES_MPI_ENDPOINT || env.ANDES_MPI_ENDPOINT)}?documento=${dni}`, {headers: { 'Authorization': (process.env.JWT_MPI_TOKEN || env.JWT_MPI_TOKEN)}})
+        const resp =  await needle("get", `${process.env.ANDES_MPI_ENDPOINT}?documento=${dni}`, {headers: { 'Authorization': process.env.JWT_MPI_TOKEN}})
         resp.body.forEach(function (item: any) {
           patients.push(<IPatient>{
             dni: item.documento,
