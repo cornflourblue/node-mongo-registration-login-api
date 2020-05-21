@@ -86,10 +86,12 @@ class PrescriptionController implements BaseController{
         endDate = moment(filterDate, 'YYYY-MM-DD').endOf('day').toDate();
       }
 
+      await this.updateStatuses('', filterPatient);
+
       const prescriptions: IPrescription[] | null = await Prescription.find({
         "patient.dni": filterPatient,
         "date": { "$gte": startDate, "$lt": endDate }
-      });
+      }).sort({ field: 'desc', date: -1});
 
       return res.status(200).json(prescriptions);
     }catch(err){
@@ -100,8 +102,9 @@ class PrescriptionController implements BaseController{
 
   public getByUserId = async (req: Request, res: Response): Promise<Response> => {
     try{
-      const userId: IUser =  <IUser> {_id: req.params.userId};
-      const prescriptions: IPrescription[] | null = await Prescription.find({ "professional.userId":  userId});
+      const { userId } = req.params;
+      await this.updateStatuses(userId, '');
+      const prescriptions: IPrescription[] | null = await Prescription.find({ "professional.userId":  userId}).sort({ field: 'desc', date: -1});
       return res.status(200).json(prescriptions);
     }catch(err){
       console.log(err);
@@ -145,7 +148,9 @@ class PrescriptionController implements BaseController{
     try{
 
       const prescription: IPrescription | null = await Prescription.findOne({_id: id, status: "Pendiente"});
-      if(!prescription) return res.status(400).json("No se encontró la prescripción o se encuentra dispensada");
+      
+      if(!prescription) return res.status(400).json("No se encontró la prescripción, se encuentra dispensada o vencida");
+
 
       const errors: any[] = [];
       const suppliesLoaded: PrescriptionSupply[] = [];
@@ -197,6 +202,22 @@ class PrescriptionController implements BaseController{
       console.log(err);
       return res.status(500).json('Server Error');
     }
+  }
+
+  private updateStatuses = async (professionalId: string = '', filterPatient: string = ''): Promise<void> => {
+    let limitDate: Date = moment().subtract(30, 'day').startOf('day').toDate(); // expired control date
+    // before search: update expired prescriptions, with status "Pendiente"
+    await Prescription.updateMany({
+      "status": "Pendiente",
+      "date": { "$lt": limitDate },
+      "$or": [{
+        "professional.userId": (professionalId !== '' ? professionalId : null)
+      },{
+        "patient.dni": filterPatient
+      }]
+    }, {
+      "status": "Vencida"
+    });
   }
 }
 
