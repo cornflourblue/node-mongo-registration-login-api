@@ -87,7 +87,21 @@ class SupplyController implements BaseController{
       const { supplyName } = req.query;
       let target: string = decodeURIComponent(supplyName);
       target = target.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-      const supplies: ISupply[] = await Supply.find({name: { $regex: new RegExp( target, "ig")}  }).select('name').limit(20);
+      let search: string = "";
+      let supplies: ISupply[];
+      // first word should apper in all coincidence
+      const words = target.split(" ");
+      if(words.length > 1){
+        // find by multiple words
+        for(let i =  0; i < words.length; i++){
+          search += '\"' + words[i].trim() + '\"' + " ";
+        }
+        supplies = await Supply.find({$text: {$search: search}}).select('name').limit(20);
+      }else{
+        // find by regex with the first word
+        supplies = await Supply.find({name: { $regex: new RegExp( target, "ig")}  }).select('name').limit(20);
+      }
+
       return res.status(200).json(supplies);
     }catch(err){
       console.log(err);

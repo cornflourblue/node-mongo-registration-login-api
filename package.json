@@ -12,7 +12,7 @@
         "build": "tsc",
         "start": "node dist/src/server.js",
         "start:dev": "ts-node ./src/server.ts",
-        "dev": "nodemon",
+        "dev": "nodemon"
     },
     "dependencies": {
         "accesscontrol": "^2.2.1",
