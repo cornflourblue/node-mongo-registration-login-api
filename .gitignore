@@ -39,3 +39,4 @@ typings
 
 # production build
 dist
+.env
