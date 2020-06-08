@@ -122,6 +122,7 @@ class PrescriptionController implements BaseController{
       if(!dispensedBy) return res.status(4000).json("Farmacia no encontrada");
 
       const opts: any = {new: true};
+      const dispensedAt = moment();
       const prescription: IPrescription | null = await Prescription.findOneAndUpdate({_id: prescriptionId, status: 'Pendiente'}, {
         status: 'Dispensada',
         dispensedBy: {
@@ -129,7 +130,7 @@ class PrescriptionController implements BaseController{
           businessName: dispensedBy?.businessName,
           cuil: dispensedBy?.cuil,
         },
-        dispensedAt: new Date()
+        dispensedAt: dispensedAt
       }, opts);
 
       if(!prescription) return res.status(422).json('La receta ya había sido dispensada.');
@@ -148,7 +149,7 @@ class PrescriptionController implements BaseController{
     try{
 
       const prescription: IPrescription | null = await Prescription.findOne({_id: id, status: "Pendiente"});
-      
+
       if(!prescription) return res.status(400).json("No se encontró la prescripción, se encuentra dispensada o vencida");
 
 
